@@ -1,0 +1,45 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": { "navigationStyle": "custom", "enablePullDownRefresh": true }
+    }
+  ],
+  "subPackages": [
+    {
+      "root": "pagesA",
+      "pages": [
+        {
+          "path": "test",
+          "style": { "navigationBarTitleText": "test页面", "enablePullDownRefresh": true }
+        }
+      ]
+    }
+  ],
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#333",
+    "borderStyle": "black",
+    "backgroundColor": "#fff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "./static/images/tabbar/home.png",
+        "selectedIconPath": "./static/images/tabbar/home-selected.png"
+      }
+    ]
+  },
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "音乐之家",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "easycom": {
+    "custom": {
+      "^u-([^-].*)": "uview-plus/components/u-$1/u-$1.vue",
+      "(.*)": "@/components/$1/index.vue"
+    }
+  }
+}
