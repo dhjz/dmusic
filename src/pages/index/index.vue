@@ -29,7 +29,7 @@
           <text class="iconfont icon-custom icon-add" @click="addToList(item)" />
         </view>
       </view>
-      <view v-if="filteredMusicList && filteredMusicList.length">暂无音乐</view>
+      <view class="text-center" v-if="!filteredMusicList || !filteredMusicList.length">暂无音乐</view>
     </view>
 
     <FloatTool :showTop="showBackToTop" @location="locationItem" v-show="isLogin" />
@@ -124,7 +124,8 @@ function addToList(item) {
 
 function locationItem() {
   let ind = filteredMusicList.value.findIndex(item => `${item.path}${item.name}` === `${currentSong.value.path}${currentSong.value.name}`)
-  document.getElementById(`mitem-${ind}`).scrollIntoView({ behavior: 'smooth',  block: 'center' });
+  uni.pageScrollTo({ selector: `#mitem-${ind}` })
+  // document.getElementById(`mitem-${ind}`).scrollIntoView({ behavior: 'smooth',  block: 'center' });
 }
 
 function login() {
