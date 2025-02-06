@@ -17,6 +17,10 @@ body {
   --border-color-base: #dcdfe6;
   --background-color-base: #f8f8f8
   height: 100%;
+  --bar-height: calc(var(--status-bar-height));
+}
+.pts {
+  padding-top: var(--bar-height) !important;
 }
 page {
   height: 100%;

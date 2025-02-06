@@ -1,13 +1,15 @@
 <template>
-  <view class="container">
+  <view class="container pts">
     <!-- 搜索栏 -->
-    <view class="search-bar">
-      <input class="search-input" placeholder="关键字搜索音乐, 回车确认" v-model="searchQuery" @confirm="handleSearch"/>
-      <view class="search-icon" v-show="searchQuery">
-        <text class="iconfont icon-close" @click="clearSearch" />
-      </view>
-      <view class="search-icon">
-        <text class="iconfont icon-search" @click="handleSearch" />
+    <view class="search-wrap">
+      <view class="search-bar">
+        <input class="search-input" placeholder="关键字搜索音乐, 回车确认" v-model="searchQuery" @confirm="handleSearch"/>
+        <view class="search-icon" v-show="searchQuery">
+          <text class="iconfont icon-close" @click="clearSearch" />
+        </view>
+        <view class="search-icon">
+          <text class="iconfont icon-search" @click="handleSearch" />
+        </view>
       </view>
     </view>
     <view class="search-tip" v-if="isLogin">
@@ -142,7 +144,9 @@ function login() {
   flex-direction: column;
   padding: 10px;
 }
-
+.search-wrap {
+  padding-top: 10px;
+}
 .search-bar {
   display: flex;
   align-items: center;

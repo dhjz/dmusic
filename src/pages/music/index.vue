@@ -1,5 +1,5 @@
 <template>
-  <view class="wh-full" :class="{ 'full-screen': fullScreen }">
+  <view class="wh-full pts" :class="{ 'full-screen': fullScreen }">
     <view class="music-title">{{ currName }}</view>
     <view class="music-path">{{ currentSong.path }}</view>
     <!-- 旋转的光盘 -->
@@ -239,7 +239,7 @@ function lyricChange(e) {
   margin-top: 20px;
   width: 100%;
   font-size: 28rpx;
-  height: calc(100vh - 240px);
+  height: calc(100vh - 220px - var(--bar-height));
 }
 .lyric-item {
   font-size: 14px;
