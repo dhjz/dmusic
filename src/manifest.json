@@ -7,7 +7,8 @@
   "transformPx": false,
   "h5": {
     "router": {
-      "mode": "history"
+      "mode": "hash",
+      "base": "./"
     },
     "devServer": {
       "port": 8082,

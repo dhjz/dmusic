@@ -48,8 +48,6 @@
   },
   "easycom": {
     "custom": {
-      "^u-([^-].*)": "uview-plus/components/u-$1/u-$1.vue",
-      "(.*)": "@/components/$1/index.vue"
     }
   }
 }

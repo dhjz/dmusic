@@ -10,13 +10,13 @@
         <text class="iconfont icon-search" @click="handleSearch" />
       </view>
     </view>
-    <view class="search-tip">
+    <view class="search-tip" v-if="isLogin">
       共{{ filteredMusicList.length }} / {{ musicList.length }} 首歌曲,
       <view class="sync-music" @click="syncMusic">强制同步</view>
     </view>
 
     <!-- 音乐列表 -->
-    <view class="music-list">
+    <view class="music-list" v-if="isLogin">
       <view class="music-item" v-for="(item, index) in filteredMusicList" :key="index" :class="{ on: currentSong.name == item.name }" :id="`mitem-${index}`">
         <view class="music-info flex-1">
           <view class="music-title line-1">{{ item.name }}</view>
@@ -27,9 +27,14 @@
           <text class="iconfont icon-custom icon-add" @click="addToList(item)" />
         </view>
       </view>
+      <view v-if="filteredMusicList && filteredMusicList.length">暂无音乐</view>
     </view>
 
-    <FloatTool :showTop="showBackToTop" @location="locationItem" />
+    <FloatTool :showTop="showBackToTop" @location="locationItem" v-show="isLogin" />
+
+    <view v-if="!isLogin" class="login-wrap flex-center">
+      <input type="text" v-model="pwd" placeholder="输入密码, 回车确认" @confirm="login">
+    </view>
   </view>
 </template>
 
@@ -37,26 +42,31 @@
 import { refreshToken } from '@/utils/storage';
 import { usePlayer } from '@/store/player'
 import { listAllSong } from '@/api/home';
-import { isMusic } from '@/utils/index';
+import { isMusic, test1 } from '@/utils/index';
 
 const playerStore = usePlayer()
 
 const { currentSong } = storeToRefs(playerStore)
 
+const test = '88'
+
+const isLogin = ref((uni.getStorageSync('pwd') || '') === (test + test1))
 const searchQuery = ref('')
 const musicList = ref([])
 const filteredMusicList = ref([])
 const showBackToTop = ref(false)
+const pwd = ref('')
 
 onPageScroll(e => {
   showBackToTop.value = e.scrollTop > 300
 })
 
 onLoad(async () => {
+  if (!isLogin.value) return
   await refreshToken()
   let songs = uni.getStorageSync('SONGS')
   if (!songs || !songs.length) {
-    uni.showLoading({ title: '加载歌曲中...', mask: true, })
+    uni.showLoading({ title: '加载歌曲中...初次加载较慢, 请稍后', mask: true, })
     songs = await listAllSong('/Music')
     uni.setStorageSync('SONGS', songs)
     uni.hideLoading()
@@ -66,6 +76,7 @@ onLoad(async () => {
 })
 
 function syncMusic() {
+  if (!isLogin.value) return
   uni.showModal({
     title: '提示',
     content: '确定要强制同步歌曲吗？这将会清空当前列表并重新加载所有歌曲。',
@@ -113,6 +124,16 @@ function locationItem() {
   let ind = filteredMusicList.value.findIndex(item => `${item.path}${item.name}` === `${currentSong.value.path}${currentSong.value.name}`)
   document.getElementById(`mitem-${ind}`).scrollIntoView({ behavior: 'smooth',  block: 'center' });
 }
+
+function login() {
+  if (pwd.value === (test + test1)) {
+    uni.setStorageSync('pwd', pwd.value)
+    uni.reLaunch({ url: '/pages/index/index' })
+  } else {
+    uni.showToast({ title: '密码错误, 请重新输入' })
+  }
+}
+
 </script>
 
 <style scoped lang="scss">
@@ -189,6 +210,21 @@ function locationItem() {
     border-style: solid;
     border-width: 0 8px 10px 8px;
     border-color: transparent transparent #999 transparent;
+  }
+}
+.login-wrap {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  input {
+    background: #fff;
+    border-radius: 10px;
+    padding: 0 10px;
+    line-height: 40px;
+    height: 40px;
   }
 }
 </style>

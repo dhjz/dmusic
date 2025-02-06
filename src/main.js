@@ -6,6 +6,8 @@ import App from './App.vue'
 import uviewPlus from 'uview-plus'
 
 import { initRequest } from './utils/request'
+import CurrPlayList from '@/components/CurrPlayList/index';
+import FloatTool from '@/components/FloatTool//index';
 
 import './static/styles/common.scss';
 
@@ -20,6 +22,9 @@ export function createApp() {
 
   // 引入请求封装
   initRequest(app)
+
+  app.component('CurrPlayList', CurrPlayList)
+  app.component('FloatTool', FloatTool)
 
 
   // 使用状态管理

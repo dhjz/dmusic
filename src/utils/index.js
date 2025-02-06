@@ -36,3 +36,5 @@ export function getFileName(val) {
   const ind = val.lastIndexOf('.');
     return ind === -1 ? val : val.slice(0, ind);
 }
+
+export const test1 = '88.'
