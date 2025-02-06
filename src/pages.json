@@ -2,7 +2,11 @@
   "pages": [
     {
       "path": "pages/index/index",
-      "style": { "navigationStyle": "custom", "enablePullDownRefresh": true }
+      "style": { "navigationStyle": "custom"}
+    },
+    {
+      "path": "pages/music/index",
+      "style": { "navigationStyle": "custom"}
     }
   ],
   "subPackages": [
@@ -25,8 +29,14 @@
       {
         "pagePath": "pages/index/index",
         "text": "首页",
-        "iconPath": "./static/images/tabbar/home.png",
-        "selectedIconPath": "./static/images/tabbar/home-selected.png"
+        "iconPath": "./static/tab-bar/home.png",
+        "selectedIconPath": "./static/tab-bar/home-active.png"
+      },
+      {
+        "pagePath": "pages/music/index",
+        "text": "播放",
+        "iconPath": "./static/tab-bar/music.png",
+        "selectedIconPath": "./static/tab-bar/music-active.png"
       }
     ]
   },

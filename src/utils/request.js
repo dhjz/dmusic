@@ -11,7 +11,7 @@ const requestInterceptors = (vm) => {
       const token = uni.getStorageSync('SESSION-TOKEN')
 
       if (token && !isToken) {
-        config.header.Authorization = 'Bearer ' + token
+        config.header.Authorization = token
       }
 
       return config
@@ -39,7 +39,7 @@ const responseInterceptors = (vm) => {
         }
       }
 
-      return data.data || {}
+      return data || {}
     },
     (response) => {
       return Promise.reject(response)
@@ -58,4 +58,23 @@ const initRequest = (vm) => {
   responseInterceptors()
 }
 
-export { initRequest }
+const rawRequest = function (options = {}) {
+  return new Promise((reso, rej) => {
+    uni.request({
+      success: function(res) {
+        if (res.statusCode === 200) {
+          reso(res.data)
+        } else {
+          rej(res)
+        }
+      },
+      fail: function(err) {
+        rej(err)
+      },
+      ...options,
+    });
+    
+  })
+}
+
+export { initRequest, rawRequest }

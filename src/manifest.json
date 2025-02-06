@@ -11,6 +11,7 @@
     },
     "devServer": {
       "port": 8082,
+      "open": true,
       "proxy": {
         "/dev-api": {
           "target": "http://110.40.139.20:8080",
