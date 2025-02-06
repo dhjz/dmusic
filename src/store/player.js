@@ -7,7 +7,9 @@ import { getSongUrl } from '@/api/home'
 import { PlayMode } from '@/utils/constants'
 import { getPlayMode, setPlayMode } from '@/utils/storage'
 import { getRandomIndexes, sleep } from '@/utils/index'
+import { getFileName } from '../utils'
 let isInitPlay = false
+let AudioNotification = null
 
 export const usePlayer = defineStore('player', () => {
   const audio = uni.getBackgroundAudioManager?.() || uni.createInnerAudioContext()
@@ -57,6 +59,7 @@ export const usePlayer = defineStore('player', () => {
       const url = data.raw_url
       currUrl.value = url
       setAudioInfo(url)
+      setNotify(song)
       // playing.value = true 请求时间不同，导致唱针的动画不一致
     } catch ({ statusCode }) {
       if (statusCode === 404) {
@@ -74,6 +77,38 @@ export const usePlayer = defineStore('player', () => {
         content: '获取播放地址失败',
         showCancel: false,
       })
+    }
+  }
+
+  function setNotify(song) {
+    // #ifdef APP-PLUS
+    if (!AudioNotification) AudioNotification = uni.requireNativePlugin("Audio-Notification")
+    AudioNotification.showView({ 
+      title: getFileName(song.name) || '音乐播放', 
+      singer: song.path || '暂无', 
+      image: 'https://www.199311.xyz/dmusic.png', 
+    }, handleNotification)
+    // #endif
+  }
+
+  function handleNotification(e) {
+    console.log('handleNotification', e.btn); 
+    switch (e.btn) { 
+      case 0: // 点击了上一曲 
+        onPrev();
+        break;
+      case 1: // 点击了暂停按钮 
+        togglePlay(true);
+        break;
+      case 2: // 点击了播放按钮 
+        togglePlay(true);
+        break; 
+      case 3: // 点击了下一曲 
+        onNext();
+        break; 
+      case 4: // 点击了关闭按钮 
+        AudioNotification.hideView(); 
+        break; 
     }
   }
 
@@ -153,13 +188,16 @@ export const usePlayer = defineStore('player', () => {
   /**
    * 切换播放
    */
-  function togglePlay() {
+  function togglePlay(isByNotify) {
     if (!isInitPlay) {
       playing.value = true
       fetchSongUrl()
       return
     }
     playing.value ? audio.pause() : audio.play()
+    if (isByNotify !== true && AudioNotification) {
+      playing.value ? AudioNotification.pause() : AudioNotification.play()
+    }
   }
 
   /**

@@ -85,7 +85,7 @@ function syncMusic() {
     success: async (res) => {
       if (res.confirm) {
         uni.showLoading({ title: '加载歌曲中...', mask: true, })
-        let songs = await listAllSong('/Music')
+        let songs = await listAllSong('/Music', true)
         musicList.value = songs.filter(item => isMusic(item.name))
         handleSearch()
         uni.hideLoading()
