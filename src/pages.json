@@ -7,6 +7,10 @@
     {
       "path": "pages/music/index",
       "style": { "navigationStyle": "custom"}
+    },
+    {
+      "path": "pages/setting/index",
+      "style": { "navigationBarTitleText": "设置"}
     }
   ],
   "subPackages": [

@@ -12,9 +12,14 @@
         </view>
       </view>
     </view>
-    <view class="search-tip" v-if="isLogin">
-      共{{ filteredMusicList.length }} / {{ musicList.length }} 首歌曲,
-      <view class="sync-music" @click="syncMusic">强制同步</view>
+    <view class="search-tip flex jc-sb ai-c" v-if="isLogin">
+      <view>
+        <view class="btn" @click="$goPage('/pages/setting/index')">设置</view>
+      </view>
+      <view>
+        共{{ filteredMusicList.length }} / {{ musicList.length }} 首歌曲,
+        <view class="sync-music" @click="syncMusic">强制同步</view>
+      </view>
     </view>
 
     <!-- 音乐列表 -->
@@ -87,6 +92,7 @@ function syncMusic() {
         uni.showLoading({ title: '加载歌曲中...', mask: true, })
         let songs = await listAllSong('/Music', true)
         musicList.value = songs.filter(item => isMusic(item.name))
+        uni.setStorageSync('SONGS', songs)
         handleSearch()
         uni.hideLoading()
       }
@@ -151,19 +157,14 @@ function login() {
 .search-bar {
   display: flex;
   align-items: center;
-  background-color: #ffffff;
-  padding: 4px 8px;
-  border-radius: 8px;
+  
   margin-bottom: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  
 }
 
 .search-input {
   flex: 1;
-  padding: 0 8px;
-  border: none;
-  font-size: 14px;
-  line-height: 52rpx;
+  
 }
 
 .search-icon {
@@ -185,6 +186,7 @@ function login() {
   text-align: right;
   font-size: 24rpx;
   color: #999;
+  margin-bottom: 6px;
 }
 .sync-music {
   color: #007aff;

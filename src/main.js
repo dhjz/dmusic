@@ -6,6 +6,7 @@ import App from './App.vue'
 import uviewPlus from 'uview-plus'
 
 import { initRequest } from './utils/request'
+import { goPage } from './utils/index'
 import CurrPlayList from '@/components/CurrPlayList/index';
 import FloatTool from '@/components/FloatTool//index';
 
@@ -26,6 +27,7 @@ export function createApp() {
   app.component('CurrPlayList', CurrPlayList)
   app.component('FloatTool', FloatTool)
 
+  app.config.globalProperties.$goPage = goPage
 
   // 使用状态管理
   app.use(Pinia.createPinia())

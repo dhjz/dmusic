@@ -19,6 +19,7 @@
  export function useLyric() {
    const isLyric = ref(uni.getStorageSync('isLyric') || false) // 是否显示歌词
    const lyricList = ref([]) // 歌词列表
+   const lyricText = ref('')
    const remoteLyrics = ref([])
    const currentLyricIndex = ref(0) // 当前播放歌词的索引
    const scrollTop = ref(0) // 滚动条位置
@@ -39,7 +40,6 @@
      let songs = uni.getStorageSync('SONGS')
      if (!songs || !songs.length) return 
      const songName = getFileName(currentSong.value.name)
-     getFileName(currentSong.value.name)
      let song = songs.find(item => `${songName}.lrc`.toLowerCase() === item.name.toLowerCase())
      let lyric = ''
      if (!song) { // 尝试在线请求
@@ -60,10 +60,13 @@
        const lyricRes = await rawRequest({ url: `${basePath}${song.path}/${song.name}?sign=${data.sign}&alist_ts=${new Date().getTime()}` })
        lyric = (lyricRes || '')
      }
-     setLyricList(lyric)
+     if (songName === getFileName(currentSong.value.name)) {
+       setLyricList(lyric)
+     }
    }
 
    function setLyricList(lyricStr) {
+    lyricText.value = lyricStr
     let lyric = lyricStr.split(/\r?\n|\r/)
     if (!lyric.length) return
  
@@ -139,6 +142,7 @@
      currentLyricIndex,
      scrollTop,
      remoteLyrics,
+     lyricText,
      setSize,
      setLyricList,
      setLyricTemp,

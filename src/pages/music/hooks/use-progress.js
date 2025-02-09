@@ -46,9 +46,13 @@
      // https://developers.weixin.qq.com/community/develop/doc/00024ab2c7844056004a8cc9056400
      audio.pause()
      audio.seek(currentTime.value)
-     audio.onSeeked(() => {
+     setTimeout(() => {
        audio.play()
-     })
+     }, 100)
+    //  audio.onSeeked(() => {
+    //     console.log('onSeeked...');
+    //     audio.play()
+    //  })
    }
  
    return {

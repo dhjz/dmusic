@@ -38,3 +38,28 @@ export function getFileName(val) {
 }
 
 export const test1 = '88.'
+
+export function goPage(url, type = 'navigate', timeout) {
+  if (!url) return
+  if (timeout) {
+    setTimeout(() => goPageDo(url, type), timeout)
+  } else {
+    goPageDo(url, type)
+  }
+}
+
+export function goPageDo(url, type = 'navigate') {
+  if (!url) return
+  if (!type) type = 'navigate'
+  type = (type + '').toLowerCase()
+  // 返回上n级, 负数自动转化为正
+  if (Number.isInteger(url)) return uni.navigateBack({ delta: Math.abs(url) })
+  // 跳转页面
+  if (type === 'navigate' || type === 'navigateto') return uni.navigateTo({ url })
+  // 重定向
+  if (type === 'redirect' || type === 'redirectto') uni.redirectTo({ url })
+  // 重新打开
+  if (type === 'relaunch') uni.reLaunch({ url })
+  // 重定向
+  if (type === 'switch' || type === 'switchtab') uni.switchTab({ url })
+}

@@ -64,6 +64,6 @@ function setupAudio() {
 
 <style lang="scss">
 @import 'uview-plus/index.scss';
-@import "@/static/iconfont/iconfont.css";
+@import "@/static/iconfont/iconfont.scss";
 // @import './static/styles/quill-editor.scss';
 </style>

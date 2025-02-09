@@ -8,7 +8,7 @@
         <view
           class="music-point" :class="{ 'stop': !playing }"
         >
-          <image class="wh-full" src="@/static/stylus.png" />
+          <image class="wh-full" src="@/static/images/stylus.png" />
         </view>
 
         <view
@@ -16,8 +16,8 @@
           :class="{ 'rotate-paused': !playing }"
           @click="isLyric = true"
         >
-          <image class="wh-full music-img-bg" src="@/static/circle.png" />
-          <image class="music-img" src="@/static/star.jpg" />
+          <image class="wh-full music-img-bg" src="@/static/images/circle.png" />
+          <image class="music-img" src="@/static/images/star.jpg" />
         </view>
       </view>
     </view>
@@ -54,6 +54,9 @@
       <picker @change="lyricChange" :value="lyricInd" :range="lyrics" range-key="name">
 				<text class="iconfont" v-show="lyrics && lyrics.length">↹</text>
       </picker>
+      <text class="iconfont" v-show="syncLyric && lyrics && lyrics.length" @click="doSyncLyric">
+        <image src="@/static/images/upload.png" />
+      </text>
     </view>
     <view class="w-full music-btm">
       <!-- 进度条 -->
@@ -99,24 +102,49 @@ import { formatTime } from '@/utils/index'
 import { usePlayer } from '@/store/player'
 import { useProgress } from './hooks/use-progress'
 import { useLyric } from './hooks/use-lyric'
+import { uploadTextFile } from '@/utils/file'
+import { getFileName } from '@/utils/index'
 
 const playerStore = usePlayer()
 const { togglePlay, onPrev, onNext, changePlayMode, fetchSongUrl } = playerStore
 const { currentSong, playing, currentTime, modeIcon, currUrl } = storeToRefs(playerStore)
 const { progress, onChanging, onChange } = useProgress()
 const { isLyric, lyricList, currentLyricIndex, scrollTop, setSize, setLyricList, setLyricTemp  } = useLyric()
-const { remoteLyrics } = storeToRefs(useLyric())
+const { remoteLyrics, lyricText } = storeToRefs(useLyric())
 
 const lyricInd = ref(0)
 const fullScreen = ref(false)
 const visible = ref(false)
 const fontSize = ref(uni.getStorageSync('lyricFontSize') || 14)
+const syncLyric = ref(uni.getStorageSync('syncLyric') || false)
 setSize(fontSize.value)
 
 // 去掉后缀名
 const currName = computed(() => (currentSong.value.name || '').split('.')[0])
 const lyrics = computed(() => remoteLyrics.value.map(item => ({...item, name: `${item.title}-${item.artist}-${item.album}`})))
 
+async function doSyncLyric() {
+  const { confirm } = await uni.showModal({
+    content: '确定要上传并覆盖歌词吗？',
+  })
+  if (!confirm) return 
+  // console.log(lyricText.value);
+  const url = import.meta.env.VITE_APP_BASE_API + '/api/fs/form'
+  const filename = `${getFileName(currentSong.value.name)}.lrc`
+  const targetFilePath = `${currentSong.value.path}/${filename}` // ${import.meta.env.VITE_APP_BASE_PATH}
+  const headers = {
+    'Authorization': uni.getStorageSync('SESSION-TOKEN'),
+    // 'Content-Type': 'multipart/form-data;',
+    'File-Path': encodeURIComponent(targetFilePath),
+    'As-Task': 'true',
+  };
+  console.log(url, headers, targetFilePath);
+  uploadTextFile(url, lyricText.value, filename, headers, (res) => {
+    if (res.data.code == 200) {
+      uni.showToast({ title: '上传成功', icon: 'none' });
+    }
+  })
+}
 
 function scaleLyric(isAdd) {
   fontSize.value += isAdd ? 1 : -1

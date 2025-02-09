@@ -17,6 +17,7 @@ body {
   --border-color-base: #dcdfe6;
   --background-color-base: #f8f8f8
   height: 100%;
+  font-size: 14px;
   --bar-height: calc(var(--status-bar-height));
 }
 .pts {
@@ -24,6 +25,37 @@ body {
 }
 page {
   height: 100%;
+}
+button, .btn {
+  display: inline-block;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #dcdfe6;
+  color: #606266;
+  text-align: center;
+  outline: none;
+  margin: 0;
+  transition: .1s;
+  padding: 4px 6px;
+  border-radius: 3px;
+  &.btn-mini {
+    font-size: 12px;
+  }
+}
+input {
+  border: none;
+  font-size: 12px;
+  line-height: 26px;
+  height: 26px;
+  background-color: #ffffff;
+  padding: 0px 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+button+button, .btn+.btn {
+  margin-left: 10px;
 }
 .line-1 {
   overflow: hidden;
@@ -117,4 +149,25 @@ page {
   display: flex;
   gap: 10px;
   align-items: center;
+}
+
+.form-item {
+  margin-bottom: 16px;
+  input {
+    margin: 6px 0 0 0;
+  }
+  .label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  &.inline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    input {
+      flex: 1;
+      margin: 0 0 0 10px;
+    }
+  }
 }
