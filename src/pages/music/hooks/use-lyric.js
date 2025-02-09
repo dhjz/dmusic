@@ -45,7 +45,7 @@
      if (!song) { // 尝试在线请求
       const lyricRes = await rawRequest({ url: `https://api.lrc.cx/jsonapi?title=${songName}&album=&artist=` })
       console.log('lyricRes', lyricRes);
-      if (lyricRes && lyricRes.length) {
+      if (lyricRes && lyricRes.length && songName === getFileName(currentSong.value.name)) {
         lyric = (lyricRes[0].lyrics || '')
         let lyricTemp = uni.getStorageSync('lyricTemp') || {}
         if (lyricTemp[songName]) {
