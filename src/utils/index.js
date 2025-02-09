@@ -8,6 +8,51 @@ export function formatTime(time) {
   return `${minute}:${second}`
 }
 
+export function throttle(fn, wait) {
+  let lastTime = 0;  // 上次执行的时间
+
+  return function (...args) {
+      const now = new Date().getTime();  // 获取当前时间
+      if (now - lastTime >= wait) {  // 判断是否达到执行间隔
+          fn.apply(this, args);  // 执行传入的函数
+          lastTime = now;  // 更新最后执行时间
+      }
+  };
+}
+
+export function toast(content) {
+  uni.showToast({
+    icon: 'none',
+    title: content
+  })
+}
+
+/**
+* 参数处理
+* @param params 参数
+*/
+export function tansParams(params) {
+  let result = ''
+  for (const propName of Object.keys(params)) {
+    const value = params[propName]
+    var part = encodeURIComponent(propName) + "="
+    if (value !== null && value !== "" && typeof (value) !== "undefined") {
+      if (typeof value === 'object') {
+        for (const key of Object.keys(value)) {
+          if (value[key] !== null && value[key] !== "" && typeof (value[key]) !== 'undefined') {
+            let params = propName + '[' + key + ']'
+            var subPart = encodeURIComponent(params) + "="
+            result += subPart + encodeURIComponent(value[key]) + "&"
+          }
+        }
+      } else {
+        result += part + encodeURIComponent(value) + "&"
+      }
+    }
+  }
+  return result
+}
+
 /**
  * 根据数组长度随机生成索引
  * @param arrLength 数组的长度

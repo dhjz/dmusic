@@ -10,7 +10,13 @@
         <view class="search-icon">
           <text class="iconfont icon-search" @click="handleSearch" />
         </view>
+        <view class="search-icon" v-if="singers && singers.length" @click="showSinger = !showSinger">
+          <image src="@/static/images/list.png"/>
+        </view>
       </view>
+    </view>
+    <view class="singers-box" v-if="showSinger">
+      <view class="singer-item" v-for="(item, index) in singers" :key="index" @click="chooseSinger(item)">{{ item }}</view>
     </view>
     <view class="search-tip flex jc-sb ai-c" v-if="isLogin">
       <view>
@@ -48,7 +54,7 @@
 <script setup>
 import { refreshToken } from '@/utils/storage';
 import { usePlayer } from '@/store/player'
-import { listAllSong } from '@/api/home';
+import { listAllSong, getRawFile, getSongUrl } from '@/api/home';
 import { isMusic, test1 } from '@/utils/index';
 
 const playerStore = usePlayer()
@@ -61,7 +67,9 @@ const isLogin = ref((uni.getStorageSync('pwd') || '') === (test + test1))
 const searchQuery = ref('')
 const musicList = ref([])
 const filteredMusicList = ref([])
+const singers = ref([])
 const showBackToTop = ref(false)
+const showSinger = ref(false)
 const pwd = ref('')
 
 onPageScroll(e => {
@@ -80,6 +88,7 @@ onLoad(async () => {
   }
   musicList.value = songs.filter(item => isMusic(item.name))
   handleSearch()
+  initSearch()
 })
 
 function syncMusic() {
@@ -98,6 +107,22 @@ function syncMusic() {
       }
     },
   })
+}
+
+async function initSearch() {
+  let searchFile = { path: '/Music', name: 'search.json' }
+  const { data } = await getSongUrl(searchFile)
+  if (!data || !data.raw_url) return
+  const res = await getRawFile(`${searchFile.path}/${searchFile.name}`, { sign: data.sign, alist_ts: Date.now()  })
+  console.log(res);
+  if (res.singers && res.singers.length) {
+    singers.value = res.singers
+  }
+}
+
+function chooseSinger(singer) {
+  searchQuery.value = singer
+  handleSearch()
 }
 
 function handleSearch() {
@@ -171,6 +196,12 @@ function login() {
   margin-left: 10px;
   font-size: 18px;
   color: #333;
+  display: flex;
+  align-items: center;
+  image {
+    width: 18px;
+    height: 18px;
+  }
 }
 .icon-search {
   font-size: 20px;
@@ -233,5 +264,17 @@ function login() {
     line-height: 40px;
     height: 40px;
   }
+}
+.singers-box {
+  margin: 0px 0;
+}
+.singer-item {
+  margin: 0 4px 6px 0;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  padding: 0 6px;
+  border-radius: 4px;
+  display: inline-block;
+  line-height: 18px;
 }
 </style>

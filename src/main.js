@@ -3,9 +3,9 @@ import * as Pinia from 'pinia'
 import App from './App.vue'
 
 // 引入UI库
-import uviewPlus from 'uview-plus'
+// import uviewPlus from 'uview-plus'
 
-import { initRequest } from './utils/request'
+// import { initRequest } from './utils/request_old'
 import { goPage } from './utils/index'
 import CurrPlayList from '@/components/CurrPlayList/index';
 import FloatTool from '@/components/FloatTool//index';
@@ -19,10 +19,10 @@ export function createApp() {
   const app = createSSRApp(App)
   
   // 使用UI库
-  app.use(uviewPlus)
+  // app.use(uviewPlus)
 
   // 引入请求封装
-  initRequest(app)
+  // initRequest(app)
 
   app.component('CurrPlayList', CurrPlayList)
   app.component('FloatTool', FloatTool)

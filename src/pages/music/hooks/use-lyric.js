@@ -3,19 +3,13 @@
  * @Date: 2023-08-25 17:44:02
  */
 
- import { getSongUrl } from '@/api/home'
+ import { getSongUrl, getRawFile } from '@/api/home'
  import { usePlayer } from '@/store/player'
- import { getFileName } from '@/utils/index';
- import { rawRequest } from '@/utils/request'
+ import { getFileName, throttle } from '@/utils/index';
+ import request from '@/utils/request'
 
+ let timer = null;
 
- const basePath =  `${import.meta.env.VITE_APP_BASE_API}/p${import.meta.env.VITE_APP_BASE_PATH}`
- 
-//  interface LyricList {
-//    time: string
-//    content: string
-//  }
- 
  export function useLyric() {
    const isLyric = ref(uni.getStorageSync('isLyric') || false) // 是否显示歌词
    const lyricList = ref([]) // 歌词列表
@@ -43,7 +37,7 @@
      let song = songs.find(item => `${songName}.lrc`.toLowerCase() === item.name.toLowerCase())
      let lyric = ''
      if (!song) { // 尝试在线请求
-      const lyricRes = await rawRequest({ url: `https://api.lrc.cx/jsonapi?title=${songName}&album=&artist=` })
+      const lyricRes = await request({ url: `https://api.lrc.cx/jsonapi?title=${songName}&album=&artist=`, noToken: true })
       console.log('lyricRes', lyricRes);
       if (lyricRes && lyricRes.length && songName === getFileName(currentSong.value.name)) {
         lyric = (lyricRes[0].lyrics || '')
@@ -57,7 +51,7 @@
      } else {
        const { data } = await getSongUrl(song)
        if (!data.raw_url) return
-       const lyricRes = await rawRequest({ url: `${basePath}${song.path}/${song.name}?sign=${data.sign}&alist_ts=${new Date().getTime()}` })
+       const lyricRes = await getRawFile(`${song.path}/${song.name}`, { sign: data.sign, alist_ts: Date.now()  })
        lyric = (lyricRes || '')
      }
      if (songName === getFileName(currentSong.value.name)) {
@@ -83,6 +77,7 @@
         })
       }
     })
+    console.log(lyricList.value);
    }
 
    function setLyricTemp(name, id) {

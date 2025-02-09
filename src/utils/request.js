@@ -1,80 +1,42 @@
-// 请求拦截
-const requestInterceptors = (vm) => {
-  uni.$u.http.interceptors.request.use(
-    (config) => {
-      // 初始化请求拦截器时，会执行此方法，此时data为undefined，赋予默认{}
-      config.data = config.data || {}
+import { toast, tansParams } from '@/utils/index'
 
-      if (config.custom.outside) return config
+let timeout = 30000
+const baseUrl = import.meta.env.VITE_APP_BASE_API
 
-      const isToken = (config.header || {}).isToken === false
-      const token = uni.getStorageSync('SESSION-TOKEN')
-
-      if (token && !isToken) {
-        config.header.Authorization = token
-      }
-
-      return config
-    },
-    (config) => Promise.reject(config)
-  )
-}
-
-// 响应拦截
-const responseInterceptors = (vm) => {
-  uni.$u.http.interceptors.response.use(
-    (response) => {
-      const data = response.data
-      const custom = response.config?.custom
-
-      if (data.code !== 200) {
-        if (custom.toast !== false) {
-          uni.$u.toast(data.message)
-        }
-
-        if (custom?.catch) {
-          return Promise.reject(data)
-        } else {
-          return new Promise(() => {})
-        }
-      }
-
-      return data || {}
-    },
-    (response) => {
-      return Promise.reject(response)
-    }
-  )
-}
-
-//  初始化请求配置
-const initRequest = (vm) => {
-  uni.$u.http.setConfig((defaultConfig) => {
-    defaultConfig.baseURL = import.meta.env.VITE_APP_BASE_API
-    return defaultConfig
-  })
-
-  requestInterceptors()
-  responseInterceptors()
-}
-
-const rawRequest = function (options = {}) {
-  return new Promise((reso, rej) => {
+const request = (config) => {
+  config.header = config.header || {}
+  if (uni.getStorageSync('SESSION-TOKEN') && !config.noToken) {
+    config.header['Authorization'] = uni.getStorageSync('SESSION-TOKEN')
+  }
+  // get请求映射params参数
+  if (config.params) {
+    let url = config.url + '?' + tansParams(config.params)
+    url = url.slice(0, -1)
+    config.url = url
+  }
+  return new Promise((resolve, reject) => {
     uni.request({
-      success: function(res) {
+      method: config.method || 'get',
+      timeout: config.timeout || timeout,
+      url: config.url.startsWith('http') ? config.url : (baseUrl + config.url),
+      data: config.data,
+      header: config.header,
+      // dataType: 'json',
+      success: (res) => {
         if (res.statusCode === 200) {
-          reso(res.data)
+          resolve(res.data || {})
         } else {
-          rej(res)
+          toast('后端接口' + res.statusCode + '异常')
+          reject('后端接口' + res.statusCode + '异常')
         }
       },
-      fail: function(err) {
-        rej(err)
+      fail: (err) => {
+        console.log(err)
+        toast('后端接口请求错误')
+        reject(err)
       },
-      ...options,
-    });
-    
+    })
   })
 }
 
-export { initRequest, rawRequest }
+export default request

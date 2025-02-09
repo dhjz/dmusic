@@ -1,17 +1,34 @@
+import request from '@/utils/request';
+
 export function getLyric(song) {
-  return uni.$u.http.get(`/system/dict/data/${id}`)
+  return request({
+    url: `/system/dict/data/${id}`,
+    method: 'post'
+  })
 }
 
 export function getSongUrl(song) {
-  return uni.$u.http.post(`/api/fs/get`, { path: `${song.path}/${song.name}` })
+  return request({
+    url: `/api/fs/get`,
+    method: 'post',
+    data: { path: `${song.path}/${song.name}` },
+  })
 }
 
-export function uploadFile(song) {
-  return uni.$u.http.post(`/api/fs/get`, { path: `${song.path}/${song.name}` })
+export function getRawFile(path, params) { // params: { sign, alist_ts }
+  return request({
+    url: `${import.meta.env.VITE_APP_BASE_RAW}${path}`,
+    method: 'get',
+    params
+  })
 }
 
 export function getApiToken() {
-  return uni.$u.http.post(`/api/auth/login`, { username: 'guest', password: 'guest' })
+  return request({
+    url: `/api/auth/login`,
+    method: 'post',
+    data: { username: 'guest', password: 'guest' },
+  })
 }
 
 // 获取文件目录的递归函数
@@ -21,7 +38,7 @@ export async function listSong(path = '', depth = 1, result = [], isForce) {
   try {
     // 请求文件列表
     let url = `/api/fs/list${isForce ? ('?t=' + new Date().getTime()) : ''}`
-    const res = await uni.$u.http.post(url, { path });
+    const res = await request({ url, method: 'post',  data: { path }});
     
     const files = res.data.content || []; // 假设返回的数据包含在 'data' 字段中
     

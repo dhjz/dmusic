@@ -109,8 +109,8 @@ const playerStore = usePlayer()
 const { togglePlay, onPrev, onNext, changePlayMode, fetchSongUrl } = playerStore
 const { currentSong, playing, currentTime, modeIcon, currUrl } = storeToRefs(playerStore)
 const { progress, onChanging, onChange } = useProgress()
-const { isLyric, lyricList, currentLyricIndex, scrollTop, setSize, setLyricList, setLyricTemp  } = useLyric()
-const { remoteLyrics, lyricText } = storeToRefs(useLyric())
+const { isLyric, setSize, setLyricList, setLyricTemp  } = useLyric()
+const { remoteLyrics, lyricText, lyricList, scrollTop, currentLyricIndex } = storeToRefs(useLyric())
 
 const lyricInd = ref(0)
 const fullScreen = ref(false)
