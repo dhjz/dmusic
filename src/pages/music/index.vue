@@ -51,6 +51,9 @@
       <text class="iconfont icon-custom icon-add" @click="scaleLyric(true)" />
       <text class="iconfont icon-custom icon-minus" @click="scaleLyric(false)" />
       <text class="iconfont icon-custom icon-full" @click="fullScreen = !fullScreen" />
+      <text class="iconfont" v-show="!lyricText" @click="fetchLyric">
+        <image src="@/static/images/refresh.png" />
+      </text>
       <picker @change="lyricChange" :value="lyricInd" :range="lyrics" range-key="name">
 				<text class="iconfont" v-show="lyrics && lyrics.length">↹</text>
       </picker>
@@ -106,11 +109,12 @@ import { uploadTextFile } from '@/utils/file'
 import { getFileName } from '@/utils/index'
 
 const playerStore = usePlayer()
+const lyricStore = useLyric()
 const { togglePlay, onPrev, onNext, changePlayMode, fetchSongUrl } = playerStore
 const { currentSong, playing, currentTime, modeIcon, currUrl } = storeToRefs(playerStore)
 const { progress, onChanging, onChange } = useProgress()
-const { isLyric, setSize, setLyricList, setLyricTemp  } = useLyric()
-const { remoteLyrics, lyricText, lyricList, scrollTop, currentLyricIndex } = storeToRefs(useLyric())
+const { isLyric, setSize, setLyricList, setLyricTemp, fetchLyric  } = lyricStore
+const { remoteLyrics, lyricText, lyricList, scrollTop, currentLyricIndex } = storeToRefs(lyricStore)
 
 const lyricInd = ref(0)
 const fullScreen = ref(false)

@@ -21,12 +21,19 @@
  
    const { currentSong, currentTime } = storeToRefs(usePlayer())
  
-   watch(currentSong, () => fetchLyric(), { immediate: true })
+   watch(currentSong, () => {
+    if (timer) {
+      clearTimeout(timer)
+      timer = null
+    }
+    timer = setTimeout(() => fetchLyric(), 200)
+   }, { immediate: true })
    watch(currentTime, () => scrollLyric())
 
    watch(isLyric, () => uni.setStorageSync('isLyric', isLyric.value))
  
    async function fetchLyric() {
+     console.log(333);
      if (!currentSong.value.name) return
      lyricList.value = []
      remoteLyrics.value = []
@@ -37,9 +44,10 @@
      let song = songs.find(item => `${songName}.lrc`.toLowerCase() === item.name.toLowerCase())
      let lyric = ''
      if (!song) { // 尝试在线请求
-      const lyricRes = await request({ url: `https://api.lrc.cx/jsonapi?title=${songName}&album=&artist=`, noToken: true })
+      let lyricRes = await request({ url: `https://api.lrc.cx/jsonapi?title=${songName}&album=&artist=`, noToken: true })
       console.log('lyricRes', lyricRes);
       if (lyricRes && lyricRes.length && songName === getFileName(currentSong.value.name)) {
+        lyricRes = lyricRes.filter(x => x.lyrics && x.lyrics.trim())
         lyric = (lyricRes[0].lyrics || '')
         let lyricTemp = uni.getStorageSync('lyricTemp') || {}
         if (lyricTemp[songName]) {
@@ -77,7 +85,7 @@
         })
       }
     })
-    console.log(lyricList.value);
+    // console.log(currentSong.value.name, lyricList.value);
    }
 
    function setLyricTemp(name, id) {
@@ -141,6 +149,7 @@
      setSize,
      setLyricList,
      setLyricTemp,
+     fetchLyric,
    }
  }
  

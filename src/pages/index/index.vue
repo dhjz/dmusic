@@ -10,12 +10,12 @@
         <view class="search-icon">
           <text class="iconfont icon-search" @click="handleSearch" />
         </view>
-        <view class="search-icon" v-if="singers && singers.length" @click="showSinger = !showSinger">
+        <view class="search-icon" v-if="singers && singers.length" @click="setShowSinger">
           <image src="@/static/images/list.png"/>
         </view>
       </view>
     </view>
-    <view class="singers-box" v-if="showSinger">
+    <view class="singers-box" v-if="showSinger && singers.length">
       <view class="singer-item" v-for="(item, index) in singers" :key="index" @click="chooseSinger(item)">{{ item }}</view>
     </view>
     <view class="search-tip flex jc-sb ai-c" v-if="isLogin">
@@ -69,7 +69,7 @@ const musicList = ref([])
 const filteredMusicList = ref([])
 const singers = ref([])
 const showBackToTop = ref(false)
-const showSinger = ref(false)
+const showSinger = ref(uni.getStorageSync('showSinger') || false)
 const pwd = ref('')
 
 onPageScroll(e => {
@@ -107,6 +107,11 @@ function syncMusic() {
       }
     },
   })
+}
+
+function setShowSinger(val) {
+  showSinger.value = !showSinger.value
+  uni.setStorageSync('showSinger', showSinger.value)
 }
 
 async function initSearch() {
@@ -272,9 +277,10 @@ function login() {
   margin: 0 4px 6px 0;
   font-size: 12px;
   border: 1px solid #ccc;
-  padding: 0 6px;
+  padding: 0 4px;
   border-radius: 4px;
   display: inline-block;
   line-height: 18px;
+  cursor: pointer;
 }
 </style>
