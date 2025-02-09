@@ -69,6 +69,7 @@ async function syncDownload() {
     content: '确定要下载并覆盖配置吗？',
   })
   if (!confirm) return 
+  uni.setStorageSync('syncCode', syncCode.value)
   uni.request({
     url: 'https://f.199311.xyz/t',
     method: 'POST',
