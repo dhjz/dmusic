@@ -48,7 +48,8 @@
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "音乐之家",
     "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#F8F8F8"
+    "backgroundColor": "#F8F8F8",
+    "pageOrientation": "auto"
   },
   "easycom": {
     "custom": {

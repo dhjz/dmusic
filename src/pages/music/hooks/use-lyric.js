@@ -95,6 +95,9 @@
    }
  
    function scrollLyric() {
+    // 是否横屏
+    const isLandscape = uni.getSystemInfoSync().windowWidth > uni.getSystemInfoSync().windowHeight
+    const scrollLine = isLandscape ? 5 : 6
      // 如果当前播放时间为0则重置
      if (currentTime.value === 0) {
        scrollTop.value = 0
@@ -108,8 +111,8 @@
      const scrollDistance = lyricIndex * lineHeight + 30
  
      // 当歌词索引大于6行才开始设置滚动条位置
-     if (lyricIndex > 6) {
-       scrollTop.value = scrollDistance - (6 * lineHeight)
+     if (lyricIndex > scrollLine) {
+       scrollTop.value = scrollDistance - (scrollLine * lineHeight)
      }
    }
  

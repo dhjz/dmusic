@@ -229,7 +229,7 @@ function login() {
 
 .search-tip {
   text-align: right;
-  font-size: 24rpx;
+  font-size: 12px;
   color: #999;
   margin-bottom: 6px;
 }

@@ -1,7 +1,9 @@
 <template>
   <view class="wh-full pts" :class="{ 'full-screen': fullScreen }">
-    <view class="music-title" @click="$copy(currName, '复制成功')">{{ currName }}</view>
-    <view class="music-path">{{ currentSong.path }}</view>
+    <view class="title-wrap">
+      <view class="music-title" @click="$copy(currName, '复制成功')">{{ currName }}</view>
+      <view class="music-path">{{ currentSong.path }}</view>
+    </view>
     <!-- 旋转的光盘 -->
     <view v-show="!isLyric" class="fade-in w-full flex-1 flex-center">
       <view class="music-pic">
@@ -228,21 +230,21 @@ function lyricChange(e) {
 }
 .music-btm {
   position: absolute;
-  bottom: 20rpx;
+  bottom: 10px;
   left: 0;
-  padding: 0 30rpx;
+  padding: 0 15px;
 }
 .music-control .iconfont {
-  font-size: 46rpx;
+  font-size: 23px;
   img {
-    height: 38rpx;
+    height: 19px;
   }
 }
 .music-pic {
   position: relative;
-  width: 540rpx;
-  height: 540rpx;
-  margin-top: 120rpx;
+  width: 270px;
+  height: 270px;
+  margin-top: 60px;
 }
 .music-img-bg {
   opacity: .9;
@@ -275,8 +277,8 @@ function lyricChange(e) {
   overflow: hidden;
   margin-top: 20px;
   width: 100%;
-  font-size: 28rpx;
-  height: calc(100vh - 220px - var(--bar-height));
+  font-size: 14px;
+  height: calc(100vh - 210px - var(--bar-height));
 }
 .lyric-item {
   font-size: 14px;
@@ -312,6 +314,25 @@ function lyricChange(e) {
   }
   .lyric-control {
     bottom: 60px;
+  }
+}
+@media (orientation: landscape) {
+  .music-pic {
+    width: 160px;
+    height: 160px;
+    margin-top: 30px;
+  }
+  .title-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .lyric-box {
+
+  }
+  .lyric-item {
+    line-height: 1
   }
 }
 </style>
