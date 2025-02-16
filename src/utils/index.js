@@ -108,3 +108,12 @@ export function goPageDo(url, type = 'navigate') {
   // 重定向
   if (type === 'switch' || type === 'switchtab') uni.switchTab({ url })
 }
+
+export function copy(val, title) {
+  uni.setClipboardData({
+    data: val,
+    success() {
+      title && uni.showToast({ title: title, icon: 'none' })
+    }
+  })
+}

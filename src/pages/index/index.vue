@@ -91,6 +91,8 @@ onLoad(async () => {
   initSearch()
 })
 
+onTabItemTap(() => uni.$emit('tabClick'))
+
 function syncMusic() {
   if (!isLogin.value) return
   uni.showModal({
@@ -103,6 +105,7 @@ function syncMusic() {
         musicList.value = songs.filter(item => isMusic(item.name))
         uni.setStorageSync('SONGS', songs)
         handleSearch()
+        initSearch(true)
         uni.hideLoading()
       }
     },
@@ -114,14 +117,20 @@ function setShowSinger(val) {
   uni.setStorageSync('showSinger', showSinger.value)
 }
 
-async function initSearch() {
+async function initSearch(isForce) {
+  if (uni.getStorageSync('SINGERS') && !isForce) {
+    singers.value = uni.getStorageSync('SINGERS')
+    return
+  }
   let searchFile = { path: '/Music', name: 'search.json' }
   const { data } = await getSongUrl(searchFile)
   if (!data || !data.raw_url) return
   const res = await getRawFile(`${searchFile.path}/${searchFile.name}`, { sign: data.sign, alist_ts: Date.now()  })
   console.log(res);
-  if (res.singers && res.singers.length) {
-    singers.value = res.singers
+  let resSingers = res.singers
+  if (resSingers && resSingers.length) {
+    singers.value = resSingers
+    uni.setStorageSync('SINGERS', resSingers)
   }
 }
 

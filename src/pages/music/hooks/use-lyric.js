@@ -35,7 +35,6 @@
    async function fetchLyric() {
      console.log(333);
      if (!currentSong.value.name) return
-     lyricList.value = []
      remoteLyrics.value = []
 
      let songs = uni.getStorageSync('SONGS')
@@ -71,6 +70,7 @@
     lyricText.value = lyricStr
     let lyric = lyricStr.split(/\r?\n|\r/)
     if (!lyric.length) return
+    lyricList.value = []
  
     const timeReg = /^\[(\d{2}:\d{2}\.\d{1,})\]\s*(.*)$/
     lyric.forEach((item) => {

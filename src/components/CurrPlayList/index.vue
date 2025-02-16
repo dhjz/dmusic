@@ -57,6 +57,8 @@ const visible = computed({
   },
 })
 
+uni.$on('tabClick', () => visible.value = false)
+
 function playMusic(item) {
   uni.showToast({ title: `正在播放：${item.name}`,  icon: 'none' });
   playerStore.addPlay(item, true)

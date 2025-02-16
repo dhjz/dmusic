@@ -1,6 +1,6 @@
 <template>
   <view class="wh-full pts" :class="{ 'full-screen': fullScreen }">
-    <view class="music-title">{{ currName }}</view>
+    <view class="music-title" @click="$copy(currName, '复制成功')">{{ currName }}</view>
     <view class="music-path">{{ currentSong.path }}</view>
     <!-- 旋转的光盘 -->
     <view v-show="!isLyric" class="fade-in w-full flex-1 flex-center">
@@ -92,7 +92,7 @@
         />
         <text class="iconfont icon-next" @click="onNext" />
         <text class="iconfont icon-playlist" @click="visible = true" />
-        <text class="iconfont " @click="copyUrl">♬</text>
+        <text class="iconfont " @click="copyUrl"><img src="@/static/images/link.png" ></text>
       </view>
     </view>
 
@@ -126,6 +126,8 @@ setSize(fontSize.value)
 // 去掉后缀名
 const currName = computed(() => (currentSong.value.name || '').split('.')[0])
 const lyrics = computed(() => remoteLyrics.value.map(item => ({...item, name: `${item.title}-${item.artist}-${item.album}`})))
+
+onTabItemTap(() => uni.$emit('tabClick'))
 
 async function doSyncLyric() {
   const { confirm } = await uni.showModal({
@@ -232,6 +234,9 @@ function lyricChange(e) {
 }
 .music-control .iconfont {
   font-size: 46rpx;
+  img {
+    height: 38rpx;
+  }
 }
 .music-pic {
   position: relative;
