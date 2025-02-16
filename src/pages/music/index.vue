@@ -92,7 +92,7 @@
         />
         <text class="iconfont icon-next" @click="onNext" />
         <text class="iconfont icon-playlist" @click="visible = true" />
-        <text class="iconfont " @click="copyUrl"><img src="@/static/images/link.png" ></text>
+        <text class="iconfont " @click="copyUrl">♬</text>
       </view>
     </view>
 
