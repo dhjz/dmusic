@@ -1,4 +1,5 @@
 import request from '@/utils/request';
+import { SYS_CONFIG } from '@/config'
 
 export function getLyric(song) {
   return request({
@@ -17,7 +18,7 @@ export function getSongUrl(song) {
 
 export function getRawFile(path, params) { // params: { sign, alist_ts }
   return request({
-    url: `${import.meta.env.VITE_APP_BASE_RAW}${path}`,
+    url: `${SYS_CONFIG.baseApi}/p${path}`,
     method: 'get',
     params
   })
@@ -27,7 +28,7 @@ export function getApiToken() {
   return request({
     url: `/api/auth/login`,
     method: 'post',
-    data: { username: 'guest', password: 'guest' },
+    data: { username: SYS_CONFIG.username, password: SYS_CONFIG.password },
   })
 }
 

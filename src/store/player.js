@@ -15,7 +15,7 @@ export const usePlayer = defineStore('player', () => {
   const audio = uni.getBackgroundAudioManager?.() || uni.createInnerAudioContext()
   const playList = ref([]) // 当前播放列表
   const playing = ref(false) // 是否正在播放
-  const currentIndex = ref(0) // 当前播放的索引
+  const currentIndex = ref(uni.getStorageSync('currentIndex') || 0) // 当前播放的索引
   const currentTime = ref(0) // 当前播放时间
   const progressDragging = ref(false) // 是否正在拖动播放的进度条
   const switching = ref(false) // 是否正在切歌
@@ -24,7 +24,10 @@ export const usePlayer = defineStore('player', () => {
   const currUrl = ref('')
 
   /** 当前播放的歌曲 */
-  const currentSong = computed(() => playList.value[currentIndex.value] ?? {})
+  const currentSong = computed(() => {
+    uni.setStorageSync('currentIndex', currentIndex.value)
+    return playList.value[currentIndex.value] ?? {}
+  })
   /** 播放模式的icon */
   const modeIcon = computed(() => {
     const type = {

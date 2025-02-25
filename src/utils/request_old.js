@@ -1,3 +1,5 @@
+import { SYS_CONFIG } from "@/config"
+
 // 请求拦截
 const requestInterceptors = (vm) => {
   uni.$u.http.interceptors.request.use(
@@ -50,7 +52,7 @@ const responseInterceptors = (vm) => {
 //  初始化请求配置
 const initRequest = (vm) => {
   uni.$u.http.setConfig((defaultConfig) => {
-    defaultConfig.baseURL = import.meta.env.VITE_APP_BASE_API
+    defaultConfig.baseURL = SYS_CONFIG.baseApi
     return defaultConfig
   })
 

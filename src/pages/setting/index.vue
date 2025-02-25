@@ -3,12 +3,32 @@
     <view class="form-item">
       <view class="label">
         <view @click="showSync">同步列表</view>
-        <view>
-          <view class="btn btn-mini" @click="syncUpload">上传</view>
-          <view class="btn btn-mini" @click="syncDownload">下载</view>
-        </view>
       </view>
       <input type="text" v-model="syncCode" placeholder="同步编码, 建议3-6位, 姓名首字母" />
+    </view>
+    <view class="form-item">
+      <view class="btn" @click="syncUpload">上传</view>
+      <view class="btn" @click="syncDownload">下载</view>
+    </view>
+    <view class="hr" />
+    <view class="form-item">
+      <view class="label">alist地址</view>
+      <input type="text" v-model="configs.baseApi" placeholder="alist地址, http://ip:port" />
+    </view>
+    <view class="form-item">
+      <view class="label">音乐路径</view>
+      <input type="text" v-model="configs.musicDir" placeholder="音乐根路径, /Local/Music" />
+    </view>
+    <view class="form-item">
+      <view class="label">用户名</view>
+      <input type="text" v-model="configs.username" placeholder="用户名" />
+    </view>
+    <view class="form-item">
+      <view class="label">密码</view>
+      <input type="text" v-model="configs.password" placeholder="密码" />
+    </view>
+    <view class="form-item">
+      <view class="btn" @click="saveConfigs">保存</view>
     </view>
   </view>
 </template>
@@ -16,10 +36,31 @@
 <script setup>
 import { isMusic, test1 } from '@/utils/index';
 import { usePlayer } from '@/store/player'
+import { SYS_CONFIG } from '@/config'
 
 const playerStore = usePlayer()
 
 const syncCode = ref(uni.getStorageSync('syncCode') || '')
+
+const configs = ref({ ...SYS_CONFIG })
+
+async function saveConfigs() {
+  const { confirm } = await uni.showModal({ content: '确定要覆盖配置并重载吗？' })
+  if (!confirm) return 
+  uni.removeStorageSync('token_timestamp')
+  uni.removeStorageSync('SESSION-TOKEN')
+  uni.removeStorageSync('SONGS')
+  uni.removeStorageSync('playList')
+  uni.removeStorageSync('SINGERS')
+  Object.assign(SYS_CONFIG, configs.value)
+  uni.setStorageSync('SYS_CONFIG', configs.value)
+  // #ifdef H5
+  uni.reLaunch({ url: '/pages/index/index' })
+  // #endif
+  // #ifdef APP-PLUS
+  plus.runtime.restart()
+  // #endif
+}
 
 let count = 0
 function showSync() {
@@ -31,9 +72,7 @@ function showSync() {
 }
 
 async function syncUpload() {
-  const { confirm } = await uni.showModal({
-    content: '确定要上传并覆盖配置吗？',
-  })
+  const { confirm } = await uni.showModal({ content: '确定要上传并覆盖配置吗？' })
   if (!confirm) return 
   if (!syncCode.value || !syncCode.value.trim()) return uni.showToast({ title: '请输入同步编码' })
   uni.setStorageSync('syncCode', syncCode.value)

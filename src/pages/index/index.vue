@@ -52,6 +52,7 @@
 </template>
 
 <script setup>
+import { SYS_CONFIG } from '@/config'
 import { refreshToken } from '@/utils/storage';
 import { usePlayer } from '@/store/player'
 import { listAllSong, getRawFile, getSongUrl } from '@/api/home';
@@ -82,7 +83,7 @@ onLoad(async () => {
   let songs = uni.getStorageSync('SONGS')
   if (!songs || !songs.length) {
     uni.showLoading({ title: '加载歌曲中...初次加载较慢, 请稍后', mask: true, })
-    songs = await listAllSong('/Music')
+    songs = await listAllSong(SYS_CONFIG.musicDir)
     uni.setStorageSync('SONGS', songs)
     uni.hideLoading()
   }
@@ -101,7 +102,7 @@ function syncMusic() {
     success: async (res) => {
       if (res.confirm) {
         uni.showLoading({ title: '加载歌曲中...', mask: true, })
-        let songs = await listAllSong('/Music', true)
+        let songs = await listAllSong(SYS_CONFIG.musicDir, true)
         musicList.value = songs.filter(item => isMusic(item.name))
         uni.setStorageSync('SONGS', songs)
         handleSearch()
@@ -122,7 +123,7 @@ async function initSearch(isForce) {
     singers.value = uni.getStorageSync('SINGERS')
     return
   }
-  let searchFile = { path: '/Music', name: 'search.json' }
+  let searchFile = { path: SYS_CONFIG.musicDir, name: 'search.json' }
   const { data } = await getSongUrl(searchFile)
   if (!data || !data.raw_url) return
   const res = await getRawFile(`${searchFile.path}/${searchFile.name}`, { sign: data.sign, alist_ts: Date.now()  })

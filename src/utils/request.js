@@ -1,7 +1,8 @@
 import { toast, tansParams } from '@/utils/index'
+import { SYS_CONFIG } from '@/config'
 
 let timeout = 30000
-const baseUrl = import.meta.env.VITE_APP_BASE_API
+const baseUrl = SYS_CONFIG.baseApi
 
 const request = (config) => {
   config.header = config.header || {}

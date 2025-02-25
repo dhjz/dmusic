@@ -103,6 +103,7 @@
 </template>
 
 <script setup>
+import { SYS_CONFIG } from '@/config'
 import { formatTime } from '@/utils/index'
 import { usePlayer } from '@/store/player'
 import { useProgress } from './hooks/use-progress'
@@ -137,7 +138,7 @@ async function doSyncLyric() {
   })
   if (!confirm) return 
   // console.log(lyricText.value);
-  const url = import.meta.env.VITE_APP_BASE_API + '/api/fs/form'
+  const url = SYS_CONFIG.baseApi + '/api/fs/form'
   const filename = `${getFileName(currentSong.value.name)}.lrc`
   const targetFilePath = `${currentSong.value.path}/${filename}` // ${import.meta.env.VITE_APP_BASE_PATH}
   const headers = {
