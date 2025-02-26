@@ -2,7 +2,7 @@
  * @Author: Mojie
  * @Date: 2023-07-23 16:40:59
  */
-
+import { SYS_CONFIG } from '@/config'
 import { getSongUrl } from '@/api/home'
 import { PlayMode } from '@/utils/constants'
 import { getPlayMode, setPlayMode } from '@/utils/storage'
@@ -88,7 +88,7 @@ export const usePlayer = defineStore('player', () => {
     if (!AudioNotification) AudioNotification = uni.requireNativePlugin("Audio-Notification")
     AudioNotification.showView({ 
       title: getFileName(song.name) || '音乐播放', 
-      singer: song.path || '暂无', 
+      singer: song.path.replace(SYS_CONFIG.musicDir + '/', '') || '暂无', 
       image: 'https://www.199311.xyz/dmusic.png', 
     }, handleNotification)
     // #endif

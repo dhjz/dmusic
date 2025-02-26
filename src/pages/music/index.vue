@@ -53,7 +53,7 @@
       <text class="iconfont icon-custom icon-add" @click="scaleLyric(true)" />
       <text class="iconfont icon-custom icon-minus" @click="scaleLyric(false)" />
       <text class="iconfont icon-custom icon-full" @click="fullScreen = !fullScreen" />
-      <text class="iconfont" v-show="!lyricText" @click="fetchLyric">
+      <text class="iconfont" @click="fetchLyric">
         <image src="@/static/images/refresh.png" />
       </text>
       <picker @change="lyricChange" :value="lyricInd" :range="lyrics" range-key="name">
@@ -108,7 +108,7 @@ import { formatTime } from '@/utils/index'
 import { usePlayer } from '@/store/player'
 import { useProgress } from './hooks/use-progress'
 import { useLyric } from './hooks/use-lyric'
-import { uploadTextFile } from '@/utils/file'
+import { uploadTextFile, downloadFile } from '@/utils/file'
 import { getFileName } from '@/utils/index'
 
 const playerStore = usePlayer()
@@ -169,6 +169,12 @@ function copyUrl() {
       uni.showToast({ title: '复制链接成功', icon: 'none' })
     }
   })
+  // #ifdef APP-PLUS
+  // downloadFile(currUrl.value, currentSong.value.name).then(res => {
+  //   console.log('downloadFile success', res);
+  //   uni.showToast({ title: '下载文件成功', icon: 'none' })
+  // })
+  // #endif
 }
 
 function lyricChange(e) {

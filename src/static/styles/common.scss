@@ -27,7 +27,6 @@ page {
   height: 100%;
 }
 button, .btn {
-  cursor: pointer;
   display: inline-block;
   line-height: 1;
   white-space: nowrap;
@@ -137,6 +136,9 @@ button+button, .btn+.btn {
   border-bottom: 1px solid #e0e0e0;
   /* border-radius: 8px; */
   /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
+  &:hover {
+    background-color: #f9f9f9;
+  }
   &.on {
     .music-title, .music-artist {
       color: var(--color-base);
@@ -155,6 +157,13 @@ button+button, .btn+.btn {
   display: flex;
   gap: 10px;
   align-items: center;
+  .iconfont {
+    cursor: pointer;
+    &:hover {
+      color: var(--color-base);
+      border-color: var(--color-base);
+    }
+  }
 }
 
 .form-item {

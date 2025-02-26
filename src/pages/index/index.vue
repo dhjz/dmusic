@@ -170,7 +170,7 @@ function addToList(item) {
 
 function locationItem() {
   let ind = filteredMusicList.value.findIndex(item => `${item.path}${item.name}` === `${currentSong.value.path}${currentSong.value.name}`)
-  uni.pageScrollTo({ selector: `#mitem-${ind}` })
+  uni.pageScrollTo({ selector: `#mitem-${Math.max(0, ind - 5)}` })
   // document.getElementById(`mitem-${ind}`).scrollIntoView({ behavior: 'smooth',  block: 'center' });
 }
 

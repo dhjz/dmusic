@@ -85,6 +85,28 @@ export function removeSavedFile ({ filePath, success, fail } = {}) {
   }, fail)
 }
 
+export function downloadFile(url, filename, dir = 'music') {
+  return new Promise((resolve, reject) => {
+    uni.downloadFile({
+      url,
+      success: (res) => {
+        if (res.statusCode === 200) {
+          console.log('downloadFile', res);
+          saveFile({ tempFilePath: res.tempFilePath, fileName: filename || getFileName(res.tempFilePath), dir, success: resolve, fail: reject })
+        } else {
+          reject(new Error('下载失败'))
+        }
+      },
+      fail: reject,
+    })
+  })
+}
+
+// 根据文件全路径获取文件名
+export function getFileName(filePath) {
+  return filePath.substring(filePath.lastIndexOf('/') + 1)
+}
+
 export function uploadTextFile(url, text, filename = 'file.txt', header, success) {
   // 生成文件路径（App 端）
   // if (uni.getSystemInfoSync().uniPlatform === 'app') {

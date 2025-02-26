@@ -1,3 +1,11 @@
+import md5 from 'blueimp-md5';
+
+export { default as md5 } from 'blueimp-md5';
+
+export function getTimeKey(name) {
+  return 'c_' + md5(name).substring(0, 6)
+}
+
 export function sleep(time) {
   return new Promise(resolve => setTimeout(resolve, time));
 }
