@@ -64,7 +64,7 @@ const { currentSong } = storeToRefs(playerStore)
 
 const test = '88'
 
-const isLogin = ref((uni.getStorageSync('pwd') || '') === (test + test1))
+const isLogin = ref(true) //ref((uni.getStorageSync('pwd') || '') === (test + test1))
 const searchQuery = ref('')
 const musicList = ref([])
 const filteredMusicList = ref([])

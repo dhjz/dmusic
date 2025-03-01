@@ -1,6 +1,6 @@
 export const SYS_CONFIG = Object.assign({
-  baseApi: 'http://home.199311.xyz:25244',
+  baseApi: 'http://test.alist:25244', // http://test.alist:25244
   musicDir: '/Local/Music',
-  username: 'dhj',
-  password: 'dhj',
+  username: '',
+  password: '',
 }, uni.getStorageSync('SYS_CONFIG') || {})

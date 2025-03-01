@@ -88,7 +88,7 @@ async function syncUpload() {
   }
 
   uni.request({
-    url: 'https://f.199311.xyz/t',
+    url: '',
     method: 'POST',
     data: JSON.stringify({
       type: 'put',
@@ -110,7 +110,7 @@ async function syncDownload() {
   if (!confirm) return 
   uni.setStorageSync('syncCode', syncCode.value)
   uni.request({
-    url: 'https://f.199311.xyz/t',
+    url: '',
     method: 'POST',
     data: JSON.stringify({
       type: 'get',
