@@ -1,5 +1,5 @@
 <template>
-  <view v-if="visible" class="mask" @click="visible = false"  @touchmove.prevent />
+  <view v-if="visible" class="mask" @click="visible = false" @touchmove.prevent />
   <view class="curr-play-list" :class="{ 'visible': visible }">
     <view class="flex-center jc-sb">
       <view class="flex-center" @click="changePlayMode">
@@ -16,8 +16,8 @@
 
     <scroll-view class="scroll-view" :scroll-y="true">
       <view class="music-list">
-        <view class="music-item" v-for="(item, index) in playList" :key="index" :class="{ on: currentSong.name == item.name }">
-          <view class="music-info flex-1">
+        <view v-for="(item, index) in playList" :key="index" class="music-item" :class="{ on: currentSong.name == item.name }">
+          <view class="music-info flex-1" @dblclick="playMusic(item)">
             <view class="music-title line-1">{{ item.name }}</view>
             <view class="music-artist line-1">{{ item.path }}</view>
           </view>
@@ -27,25 +27,24 @@
           </view>
         </view>
       </view>
-      <view class="flex-center empty" v-if="!playList || !playList.length">暂无歌曲, 请到列表添加</view>
+      <view v-if="!playList || !playList.length" class="flex-center empty">暂无歌曲, 请到列表添加</view>
     </scroll-view>
   </view>
 </template>
 
 <script setup>
-import { SongsType } from '@/utils/constants'
 import { usePlayer } from '@/store/player'
 
 const props = defineProps({
   modelValue: {
     type: Boolean,
-    default: false,
-  },
+    default: false
+  }
 })
 const emit = defineEmits()
 
 const playerStore = usePlayer()
-const { changePlayMode, clearSongList  } = playerStore
+const { changePlayMode, clearSongList } = playerStore
 const { modeIcon, modeText, playList, currentSong } = storeToRefs(playerStore)
 
 const visible = computed({
@@ -54,27 +53,27 @@ const visible = computed({
   },
   set(val) {
     emit('update:modelValue', val)
-  },
+  }
 })
 
-uni.$on('tabClick', () => visible.value = false)
+uni.$on('tabClick', () => (visible.value = false))
 
 function playMusic(item) {
-  uni.showToast({ title: `正在播放：${item.name}`,  icon: 'none' });
+  uni.showToast({ title: `正在播放：${item.name}`, icon: 'none' })
   playerStore.addPlay(item, true)
 }
 
 function delToList(item) {
   uni.showToast({
     title: `已从我的音乐列表删除：${item.name}`,
-    icon: 'none',
-  });
+    icon: 'none'
+  })
   playerStore.delPlay(item)
 }
 
 async function onClear() {
   const { confirm } = await uni.showModal({
-    content: '确定要清空播放列表吗？',
+    content: '确定要清空播放列表吗？'
   })
   if (confirm) {
     clearSongList()
@@ -86,27 +85,27 @@ async function onClear() {
 
 <style lang="scss" scoped>
 .mask {
-  position: fixed; 
-  top: 0; 
-  left: 0; 
-  width: 100%; 
-  height: 100%; 
-  background-color: rgba(0, 0, 0, 0.5); 
-  z-index: 998; 
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 998;
 }
 .curr-play-list {
-  width: 100%; 
-  height: 70%; 
-  position: fixed; 
-  left: 0; 
-  bottom: 0; 
-  background-color: white; 
-  z-index: 999; 
-  transition: all 300ms; 
-  transform: translateY(100%); 
-  padding: 20px; 
-  display: flex; 
-  flex-direction: column; 
+  width: 100%;
+  height: 70%;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  background-color: white;
+  z-index: 999;
+  transition: all 300ms;
+  transform: translateY(100%);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
   border-radius: 10px 10px 0 0;
   &.visible {
     transform: translateY(0);

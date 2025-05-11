@@ -3,22 +3,22 @@
     <!-- 搜索栏 -->
     <view class="search-wrap">
       <view class="search-bar">
-        <input class="search-input" placeholder="关键字搜索音乐, 回车确认" v-model="searchQuery" @confirm="handleSearch"/>
-        <view class="search-icon" v-show="searchQuery">
+        <input v-model="searchQuery" class="search-input" placeholder="关键字搜索音乐, 回车确认" @confirm="handleSearch" />
+        <view v-show="searchQuery" class="search-icon">
           <text class="iconfont icon-close" @click="clearSearch" />
         </view>
         <view class="search-icon">
           <text class="iconfont icon-search" @click="handleSearch" />
         </view>
-        <view class="search-icon" v-if="singers && singers.length" @click="setShowSinger">
-          <image src="@/static/images/list.png"/>
+        <view v-if="singers && singers.length" class="search-icon" @click="setShowSinger">
+          <image src="@/static/images/list.png" />
         </view>
       </view>
     </view>
-    <view class="singers-box" v-if="showSinger && singers.length">
-      <view class="singer-item" v-for="(item, index) in singers" :key="index" @click="chooseSinger(item)">{{ item }}</view>
+    <view v-if="showSinger && singers.length" class="singers-box">
+      <view v-for="(item, index) in singers" :key="index" class="singer-item" @click="chooseSinger(item)">{{ item }}</view>
     </view>
-    <view class="search-tip flex jc-sb ai-c" v-if="isLogin">
+    <view v-if="isLogin" class="search-tip flex jc-sb ai-c">
       <view>
         <view class="btn" @click="$goPage('/pages/setting/index')">设置</view>
       </view>
@@ -29,9 +29,9 @@
     </view>
 
     <!-- 音乐列表 -->
-    <view class="music-list" v-if="isLogin">
-      <view class="music-item" v-for="(item, index) in filteredMusicList" :key="index" :class="{ on: currentSong.name == item.name }" :id="`mitem-${index}`">
-        <view class="music-info flex-1">
+    <view v-if="isLogin" class="music-list">
+      <view v-for="(item, index) in filteredMusicList" :id="`mitem-${index}`" :key="index" class="music-item" :class="{ on: currentSong.name == item.name }">
+        <view class="music-info flex-1" @dblclick="playMusic(item)">
           <view class="music-title line-1">{{ item.name }}</view>
           <view class="music-artist line-1">{{ item.path }}</view>
         </view>
@@ -40,23 +40,23 @@
           <text class="iconfont icon-custom icon-add" @click="addToList(item)" />
         </view>
       </view>
-      <view class="text-center" v-if="!filteredMusicList || !filteredMusicList.length">暂无音乐</view>
+      <view v-if="!filteredMusicList || !filteredMusicList.length" class="text-center">暂无音乐</view>
     </view>
 
-    <FloatTool :showTop="showBackToTop" @location="locationItem" v-show="isLogin" />
+    <FloatTool v-show="isLogin" :show-top="showBackToTop" @location="locationItem" />
 
     <view v-if="!isLogin" class="login-wrap flex-center">
-      <input type="text" v-model="pwd" placeholder="输入密码, 回车确认" @confirm="login">
+      <input v-model="pwd" placeholder="输入密码, 回车确认" type="text" @confirm="login" />
     </view>
   </view>
 </template>
 
 <script setup>
 import { SYS_CONFIG } from '@/config'
-import { refreshToken } from '@/utils/storage';
+import { refreshToken } from '@/utils/storage'
 import { usePlayer } from '@/store/player'
-import { listAllSong, getRawFile, getSongUrl } from '@/api/home';
-import { isMusic, test1 } from '@/utils/index';
+import { listAllSong, getRawFile, getSongUrl } from '@/api/home'
+import { isMusic, test1 } from '@/utils/index'
 
 const playerStore = usePlayer()
 
@@ -64,7 +64,7 @@ const { currentSong } = storeToRefs(playerStore)
 
 const test = '88'
 
-const isLogin = ref(true) //ref((uni.getStorageSync('pwd') || '') === (test + test1))
+const isLogin = ref(true) // ref((uni.getStorageSync('pwd') || '') === (test + test1))
 const searchQuery = ref('')
 const musicList = ref([])
 const filteredMusicList = ref([])
@@ -77,12 +77,12 @@ onPageScroll(e => {
   showBackToTop.value = e.scrollTop > 300
 })
 
-onLoad(async () => {
+onLoad(async() => {
   if (!isLogin.value) return
   await refreshToken()
   let songs = uni.getStorageSync('SONGS')
   if (!songs || !songs.length) {
-    uni.showLoading({ title: '加载歌曲中...初次加载较慢, 请稍后', mask: true, })
+    uni.showLoading({ title: '加载歌曲中...初次加载较慢, 请稍后', mask: true })
     songs = await listAllSong(SYS_CONFIG.musicDir)
     uni.setStorageSync('SONGS', songs)
     uni.hideLoading()
@@ -99,17 +99,17 @@ function syncMusic() {
   uni.showModal({
     title: '提示',
     content: '确定要强制同步歌曲吗？这将会清空当前列表并重新加载所有歌曲。',
-    success: async (res) => {
+    success: async(res) => {
       if (res.confirm) {
-        uni.showLoading({ title: '加载歌曲中...', mask: true, })
-        let songs = await listAllSong(SYS_CONFIG.musicDir, true)
+        uni.showLoading({ title: '加载歌曲中...', mask: true })
+        const songs = await listAllSong(SYS_CONFIG.musicDir, true)
         musicList.value = songs.filter(item => isMusic(item.name))
         uni.setStorageSync('SONGS', songs)
         handleSearch()
         initSearch(true)
         uni.hideLoading()
       }
-    },
+    }
   })
 }
 
@@ -123,12 +123,12 @@ async function initSearch(isForce) {
     singers.value = uni.getStorageSync('SINGERS')
     return
   }
-  let searchFile = { path: SYS_CONFIG.musicDir, name: 'search.json' }
+  const searchFile = { path: SYS_CONFIG.musicDir, name: 'search.json' }
   const { data } = await getSongUrl(searchFile)
   if (!data || !data.raw_url) return
-  const res = await getRawFile(`${searchFile.path}/${searchFile.name}`, { sign: data.sign, alist_ts: Date.now()  })
-  console.log(res);
-  let resSingers = res.singers
+  const res = await getRawFile(`${searchFile.path}/${searchFile.name}`, { sign: data.sign, alist_ts: Date.now() })
+  console.log(res)
+  const resSingers = res.singers
   if (resSingers && resSingers.length) {
     singers.value = resSingers
     uni.setStorageSync('SINGERS', resSingers)
@@ -142,34 +142,34 @@ function chooseSinger(singer) {
 
 function handleSearch() {
   filteredMusicList.value = musicList.value.filter(item => {
-    return item.name.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
-           item.path.toLowerCase().includes(searchQuery.value.toLowerCase());
-  });
+    return item.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+           item.path.toLowerCase().includes(searchQuery.value.toLowerCase())
+  })
 }
 
 function clearSearch() {
   searchQuery.value = ''
   handleSearch()
 }
-    
+
 function playMusic(item) {
   uni.showToast({
     title: `正在播放：${item.name}`,
-    icon: 'none',
-  });
+    icon: 'none'
+  })
   playerStore.addPlay(item, true)
 }
-    
+
 function addToList(item) {
   uni.showToast({
     title: `已添加到我的音乐列表：${item.name}`,
-    icon: 'none',
-  });
+    icon: 'none'
+  })
   playerStore.addPlay(item, false)
 }
 
 function locationItem() {
-  let ind = filteredMusicList.value.findIndex(item => `${item.path}${item.name}` === `${currentSong.value.path}${currentSong.value.name}`)
+  const ind = filteredMusicList.value.findIndex(item => `${item.path}${item.name}` === `${currentSong.value.path}${currentSong.value.name}`)
   uni.pageScrollTo({ selector: `#mitem-${Math.max(0, ind - 5)}` })
   // document.getElementById(`mitem-${ind}`).scrollIntoView({ behavior: 'smooth',  block: 'center' });
 }
@@ -197,14 +197,14 @@ function login() {
 .search-bar {
   display: flex;
   align-items: center;
-  
+
   margin-bottom: 10px;
-  
+
 }
 
 .search-input {
   flex: 1;
-  
+
 }
 
 .search-icon {
