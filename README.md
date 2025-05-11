@@ -1,4 +1,6 @@
 ## alist音乐播放器music player
+### 在线预览地址
+- <a href="http://199311.xyz/alist-music/#/" target="_blank">http://199311.xyz/alist-music/#/</a>
 ### 开发语言
 - 前端: vue3
 ```shell
