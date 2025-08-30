@@ -7,6 +7,7 @@ import { getSongUrl, getRawFile } from '@/api/home'
 import { usePlayer } from '@/store/player'
 import { getFileName, throttle } from '@/utils/index'
 import request from '@/utils/request'
+import { toast } from '@/utils/index'
 
 let timer = null
 
@@ -43,20 +44,21 @@ export function useLyric() {
     const song = songs.find(item => `${songName}.lrc`.toLowerCase() === item.name.toLowerCase())
     let lyric = ''
     if (!song) { // 尝试在线请求
-      try {
-        let lyricRes = await request({ url: `https://api.lrc.cx/jsonapi?title=${songName}&album=&artist=`, noToken: true })
-        console.log('lyricRes', lyricRes)
-        if (lyricRes && lyricRes.length && songName === getFileName(currentSong.value.name)) {
-          lyricRes = lyricRes.filter(x => x.lyrics && x.lyrics.trim())
-          lyric = (lyricRes[0].lyrics || '')
-          const lyricTemp = uni.getStorageSync('lyricTemp') || {}
-          if (lyricTemp[songName]) {
-            const one = lyricRes.find(x => x.id === lyricTemp[songName])
-            if (one) lyric = one.lyrics
-          }
-          remoteLyrics.value = lyricRes
-        }
-      } catch (e) { console.log(e) }
+      // try {
+      //   let lyricRes = await request({ url: `https://api.lrc.cx/jsonapi?title=${songName}&album=&artist=`, noToken: true })
+      //   console.log('lyricRes', lyricRes)
+      //   if (lyricRes && lyricRes.length && songName === getFileName(currentSong.value.name)) {
+      //     lyricRes = lyricRes.filter(x => x.lyrics && x.lyrics.trim())
+      //     lyric = (lyricRes[0].lyrics || '')
+      //     const lyricTemp = uni.getStorageSync('lyricTemp') || {}
+      //     if (lyricTemp[songName]) {
+      //       const one = lyricRes.find(x => x.id === lyricTemp[songName])
+      //       if (one) lyric = one.lyrics
+      //     }
+      //     remoteLyrics.value = lyricRes
+      //   }
+      // } catch (e) { console.log(e) }
+      toast('歌词获取失败')
     } else {
       const { data } = await getSongUrl(song)
       if (!data.raw_url) return

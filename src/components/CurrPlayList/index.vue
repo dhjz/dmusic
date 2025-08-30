@@ -17,7 +17,7 @@
     <scroll-view class="scroll-view" :scroll-y="true">
       <view class="music-list">
         <view v-for="(item, index) in playList" :key="index" class="music-item" :class="{ on: currentSong.name == item.name }">
-          <view class="music-info flex-1" @dblclick="playMusic(item)">
+          <view class="music-info flex-1" @click="playMusic(item)">
             <view class="music-title line-1">{{ item.name }}</view>
             <view class="music-artist line-1">{{ item.path }} <span v-if="item.lrc">歌词</span></view>
           </view>

@@ -87,7 +87,7 @@ async function syncUpload() {
   }
 
   uni.request({
-    url: '',
+    url: 'https://f.199311.xyz/t',
     method: 'POST',
     data: JSON.stringify({
       type: 'put',
@@ -108,7 +108,7 @@ async function syncDownload() {
   if (!confirm) return
   uni.setStorageSync('syncCode', syncCode.value)
   uni.request({
-    url: '',
+    url: 'https://f.199311.xyz/t',
     method: 'POST',
     data: JSON.stringify({
       type: 'get',
@@ -122,7 +122,7 @@ async function syncDownload() {
       if (data['lyricTemp'] && Object.keys(data['lyricTemp']).length) {
         uni.setStorageSync('lyricTemp', data['lyricTemp'])
       }
-      uni.showToast({ title: '下载成功', icon: 'success' })
+      uni.showToast({ title: '下载成功, 播放列表数量: ' + (data['playList']?.length || 0), icon: 'success' })
     },
     fail: (error) => {}
   })

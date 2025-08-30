@@ -33,7 +33,7 @@ export const usePlayer = defineStore('player', () => {
     const type = {
       [PlayMode.Sequence]: 'icon-sequence',
       [PlayMode.Loop]: 'icon-loop',
-      [PlayMode.Random]: 'icon-random',
+      [PlayMode.Random]: 'icon-random'
     }
     return type[playMode.value]
   })
@@ -42,7 +42,7 @@ export const usePlayer = defineStore('player', () => {
     const type = {
       [PlayMode.Sequence]: '顺序播放',
       [PlayMode.Loop]: '循环播放',
-      [PlayMode.Random]: '随机播放',
+      [PlayMode.Random]: '随机播放'
     }
     return type[playMode.value]
   })
@@ -69,7 +69,7 @@ export const usePlayer = defineStore('player', () => {
         uni.showModal({
           title: '提示',
           content: `${source}源中没有该歌曲`,
-          showCancel: false,
+          showCancel: false
         })
         // 用于player页面
         return Promise.reject(new Error(`${source}源中没有该歌曲`))
@@ -78,40 +78,40 @@ export const usePlayer = defineStore('player', () => {
       uni.showModal({
         title: '提示',
         content: '获取播放地址失败',
-        showCancel: false,
+        showCancel: false
       })
     }
   }
 
   function setNotify(song) {
     // #ifdef APP-PLUS
-    if (!AudioNotification) AudioNotification = uni.requireNativePlugin("Audio-Notification")
-    AudioNotification.showView({ 
-      title: getFileName(song.name) || '音乐播放', 
-      singer: song.path.replace(SYS_CONFIG.musicDir + '/', '') || '暂无', 
-      image: 'https://www.199311.xyz/dmusic.png', 
+    if (!AudioNotification) AudioNotification = uni.requireNativePlugin('Audio-Notification')
+    AudioNotification.showView({
+      title: getFileName(song.name) || '音乐播放',
+      singer: song.path.replace(SYS_CONFIG.musicDir + '/', '') || '暂无',
+      image: 'https://www.199311.xyz/dmusic.png'
     }, handleNotification)
     // #endif
   }
 
   function handleNotification(e) {
-    console.log('handleNotification', e.btn); 
-    switch (e.btn) { 
-      case 0: // 点击了上一曲 
-        onPrev();
-        break;
-      case 1: // 点击了暂停按钮 
-        togglePlay(true);
-        break;
-      case 2: // 点击了播放按钮 
-        togglePlay(true);
-        break; 
-      case 3: // 点击了下一曲 
-        onNext();
-        break; 
-      case 4: // 点击了关闭按钮 
-        AudioNotification.hideView(); 
-        break; 
+    console.log('handleNotification', e.btn)
+    switch (e.btn) {
+      case 0: // 点击了上一曲
+        onPrev()
+        break
+      case 1: // 点击了暂停按钮
+        togglePlay(true)
+        break
+      case 2: // 点击了播放按钮
+        togglePlay(true)
+        break
+      case 3: // 点击了下一曲
+        onNext()
+        break
+      case 4: // 点击了关闭按钮
+        AudioNotification.hideView()
+        break
     }
   }
 
@@ -134,7 +134,7 @@ export const usePlayer = defineStore('player', () => {
     if ('mediaSession' in navigator) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: currentSongVal.name,
-        artist: currentSongVal.path,
+        artist: currentSongVal.path
         // album: currentSongVal.album.name,
         // artwork: [
         //   {
@@ -163,8 +163,8 @@ export const usePlayer = defineStore('player', () => {
 
   function addPlay(song, isPlay) {
     let ind = playList.value.findIndex((item) => `${item.path}${item.name}` === `${song.path}${song.name}`)
-    if (ind === -1){
-      playList.value.push({...song})
+    if (ind === -1) {
+      playList.value.push({ ...song })
       ind = playList.value.length - 1
     }
     if (isPlay && (currentIndex.value != ind || !playing.value)) {
@@ -176,7 +176,7 @@ export const usePlayer = defineStore('player', () => {
   }
 
   function delPlay(song) {
-    let ind = playList.value.findIndex((item) => `${item.path}${item.name}` === `${song.path}${song.name}`)
+    const ind = playList.value.findIndex((item) => `${item.path}${item.name}` === `${song.path}${song.name}`)
     if (ind != -1) {
       playList.value.splice(ind, 1)
       if (currentIndex.value == ind) {
@@ -256,7 +256,7 @@ export const usePlayer = defineStore('player', () => {
     currentTime.value = 0
     audio.stop()
 
-    console.log('randomPlayIndexes.value', randomPlayIndexes.value);
+    console.log('randomPlayIndexes.value', randomPlayIndexes.value)
 
     // 判断是否为随机播放
     if (playMode.value === PlayMode.Random) {
@@ -299,7 +299,7 @@ export const usePlayer = defineStore('player', () => {
    * 改变播放模式
    */
   function changePlayMode() {
-    console.log('unref(playMode)', unref(playMode));
+    console.log('unref(playMode)', unref(playMode))
     const mode = Object.values(PlayMode)[(Object.values(PlayMode).indexOf(playMode.value) + 1) % 3]
     // 如果是随机播放则设置随机播放索引列表
     if (PlayMode.Random === mode) {
@@ -310,7 +310,7 @@ export const usePlayer = defineStore('player', () => {
     setPlayMode(mode)
     uni.showToast({
       title: modeText.value,
-      icon: 'none',
+      icon: 'none'
     })
   }
 
@@ -368,6 +368,6 @@ export const usePlayer = defineStore('player', () => {
     changePlayMode,
     clearSongList,
     backPlayList,
-    savePlayList,
+    savePlayList
   }
 })
