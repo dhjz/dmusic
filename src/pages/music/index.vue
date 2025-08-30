@@ -8,7 +8,8 @@
     <view v-show="!isLyric" class="fade-in w-full flex-1 flex-center">
       <view class="music-pic">
         <view
-          class="music-point" :class="{ 'stop': !playing }"
+          class="music-point"
+          :class="{ 'stop': !playing }"
         >
           <image class="wh-full" src="@/static/images/stylus.png" />
         </view>
@@ -27,20 +28,20 @@
     <!-- 歌词 -->
     <scroll-view
       v-show="isLyric"
-      scroll-y
-      scroll-with-animation
-      :scroll-top="scrollTop"
       class="fade-in flex-1 lyric-box"
       :class="isLyric ? 'opacity-100' : 'opacity-0'"
+      :scroll-top="scrollTop"
+      scroll-with-animation
+      scroll-y
       @click="isLyric = false"
     >
       <view v-if="lyricList && lyricList.length" class="pb-50%">
         <view
           v-for="(lyric, index) in lyricList"
           :key="lyric.time"
-          :style="{ fontSize: fontSize + 'px' }"
-          :class="{ 'on': index === currentLyricIndex }"
           class="text-center lyric-item"
+          :class="{ 'on': index === currentLyricIndex }"
+          :style="{ fontSize: fontSize + 'px' }"
         >
           {{ lyric.content }}
         </view>
@@ -56,23 +57,23 @@
       <text class="iconfont" @click="fetchLyric">
         <image src="@/static/images/refresh.png" />
       </text>
-      <picker @change="lyricChange" :value="lyricInd" :range="lyrics" range-key="name">
-				<text class="iconfont" v-show="lyrics && lyrics.length">↹</text>
+      <picker :range="lyrics" range-key="name" :value="lyricInd" @change="lyricChange">
+        <text v-show="lyrics && lyrics.length" class="iconfont">↹</text>
       </picker>
-      <text class="iconfont" v-show="syncLyric && lyrics && lyrics.length" @click="doSyncLyric">
+      <text v-show="syncLyric && lyrics && lyrics.length" class="iconfont" @click="doSyncLyric">
         <image src="@/static/images/upload.png" />
       </text>
     </view>
     <view class="w-full music-btm">
       <!-- 进度条 -->
       <view class="flex-center">
-        <view >{{ formatTime(currentTime) }}</view>
+        <view>{{ formatTime(currentTime) }}</view>
         <view class="flex-1">
           <slider
-            class="m0"
-            background-color="rgba(0, 0, 0, 0.3)"
             active-color="var(--color-base)"
+            background-color="rgba(0, 0, 0, 0.3)"
             :block-size="12"
+            class="m0"
             :value="progress"
             @change="onChange"
             @changing="onChanging"
@@ -116,7 +117,7 @@ const lyricStore = useLyric()
 const { togglePlay, onPrev, onNext, changePlayMode, fetchSongUrl } = playerStore
 const { currentSong, playing, currentTime, modeIcon, currUrl } = storeToRefs(playerStore)
 const { progress, onChanging, onChange } = useProgress()
-const { isLyric, setSize, setLyricList, setLyricTemp, fetchLyric  } = lyricStore
+const { isLyric, setSize, setLyricList, setLyricTemp, fetchLyric } = lyricStore
 const { remoteLyrics, lyricText, lyricList, scrollTop, currentLyricIndex } = storeToRefs(lyricStore)
 
 const lyricInd = ref(0)
@@ -128,15 +129,15 @@ setSize(fontSize.value)
 
 // 去掉后缀名
 const currName = computed(() => (currentSong.value.name || '').split('.')[0])
-const lyrics = computed(() => remoteLyrics.value.map(item => ({...item, name: `${item.title}-${item.artist}-${item.album}`})))
+const lyrics = computed(() => remoteLyrics.value.map(item => ({ ...item, name: `${item.title}-${item.artist}-${item.album}` })))
 
 onTabItemTap(() => uni.$emit('tabClick'))
 
 async function doSyncLyric() {
   const { confirm } = await uni.showModal({
-    content: '确定要上传并覆盖歌词吗？',
+    content: '确定要上传并覆盖歌词吗？'
   })
-  if (!confirm) return 
+  if (!confirm) return
   // console.log(lyricText.value);
   const url = SYS_CONFIG.baseApi + '/api/fs/form'
   const filename = `${getFileName(currentSong.value.name)}.lrc`
@@ -145,12 +146,12 @@ async function doSyncLyric() {
     'Authorization': uni.getStorageSync('SESSION-TOKEN'),
     // 'Content-Type': 'multipart/form-data;',
     'File-Path': encodeURIComponent(targetFilePath),
-    'As-Task': 'true',
-  };
-  console.log(url, headers, targetFilePath);
+    'As-Task': 'true'
+  }
+  console.log(url, headers, targetFilePath)
   uploadTextFile(url, lyricText.value, filename, headers, (res) => {
     if (res.data.code == 200) {
-      uni.showToast({ title: '上传成功', icon: 'none' });
+      uni.showToast({ title: '上传成功', icon: 'none' })
     }
   })
 }
@@ -286,6 +287,7 @@ function lyricChange(e) {
   width: 100%;
   font-size: 14px;
   height: calc(100vh - 210px - var(--bar-height));
+  height: calc(100dvh - 210px - var(--bar-height));
 }
 .lyric-item {
   font-size: 14px;
@@ -315,6 +317,7 @@ function lyricChange(e) {
   .lyric-box {
     margin-top: 4px;
     height: calc(100vh - 100px);
+    height: calc(100dvh - 100px);
   }
   .music-btm {
     display: none;

@@ -19,7 +19,7 @@
         <view v-for="(item, index) in playList" :key="index" class="music-item" :class="{ on: currentSong.name == item.name }">
           <view class="music-info flex-1" @dblclick="playMusic(item)">
             <view class="music-title line-1">{{ item.name }}</view>
-            <view class="music-artist line-1">{{ item.path }}</view>
+            <view class="music-artist line-1">{{ item.path }} <span v-if="item.lrc">歌词</span></view>
           </view>
           <view class="music-actions">
             <text class="iconfont icon-play" @click="playMusic(item)" />

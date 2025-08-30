@@ -31,9 +31,9 @@
     <!-- 音乐列表 -->
     <view v-if="isLogin" class="music-list">
       <view v-for="(item, index) in filteredMusicList" :id="`mitem-${index}`" :key="index" class="music-item" :class="{ on: currentSong.name == item.name }">
-        <view class="music-info flex-1" @dblclick="playMusic(item)">
+        <view class="music-info flex-1" @click="playMusic(item)">
           <view class="music-title line-1">{{ item.name }}</view>
-          <view class="music-artist line-1">{{ item.path }}</view>
+          <view class="music-artist line-1">{{ item.path }} <span v-if="item.lrc">歌词</span></view>
         </view>
         <view class="music-actions">
           <text class="iconfont icon-play" @click="playMusic(item)" />
@@ -56,7 +56,7 @@ import { SYS_CONFIG } from '@/config'
 import { refreshToken } from '@/utils/storage'
 import { usePlayer } from '@/store/player'
 import { listAllSong, getRawFile, getSongUrl } from '@/api/home'
-import { isMusic, test1 } from '@/utils/index'
+import { isMusic, test1, getFileName } from '@/utils/index'
 
 const playerStore = usePlayer()
 
@@ -84,6 +84,7 @@ onLoad(async() => {
   if (!songs || !songs.length) {
     uni.showLoading({ title: '加载歌曲中...初次加载较慢, 请稍后', mask: true })
     songs = await listAllSong(SYS_CONFIG.musicDir)
+    handleSongs(songs)
     uni.setStorageSync('SONGS', songs)
     uni.hideLoading()
   }
@@ -103,12 +104,23 @@ function syncMusic() {
       if (res.confirm) {
         uni.showLoading({ title: '加载歌曲中...', mask: true })
         const songs = await listAllSong(SYS_CONFIG.musicDir, true)
+        handleSongs(songs)
         musicList.value = songs.filter(item => isMusic(item.name))
         uni.setStorageSync('SONGS', songs)
         handleSearch()
         initSearch(true)
         uni.hideLoading()
       }
+    }
+  })
+}
+
+function handleSongs(songs) {
+  songs.forEach(item => {
+    if (isMusic(item.name)) {
+      const songName = getFileName(item.name)
+      const lrc = songs.some(item => `${songName}.lrc`.toLowerCase() === item.name.toLowerCase())
+      if (lrc) item.lrc = true
     }
   })
 }
@@ -269,6 +281,7 @@ function login() {
   position: fixed;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   top: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.6);

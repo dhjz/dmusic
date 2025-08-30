@@ -152,6 +152,11 @@ button+button, .btn+.btn {
 .music-artist {
   font-size: 13px;
   color: #999;
+  span {
+    border: 1px solid #ddd;
+    font-size: 11px;
+    padding: 2px;
+  }
 }
 .music-actions {
   display: flex;
