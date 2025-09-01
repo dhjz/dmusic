@@ -5,7 +5,7 @@
 
 import { getSongUrl, getRawFile } from '@/api/home'
 import { usePlayer } from '@/store/player'
-import { getFileName, throttle } from '@/utils/index'
+import { getFileName } from '@/utils/index'
 import request from '@/utils/request'
 import { toast } from '@/utils/index'
 
@@ -43,22 +43,35 @@ export function useLyric() {
     const songName = getFileName(currentSong.value.name)
     const song = songs.find(item => `${songName}.lrc`.toLowerCase() === item.name.toLowerCase())
     let lyric = ''
+    let remoteSongs = null
     if (!song) { // 尝试在线请求
-      // try {
-      //   let lyricRes = await request({ url: `https://api.lrc.cx/jsonapi?title=${songName}&album=&artist=`, noToken: true })
-      //   console.log('lyricRes', lyricRes)
-      //   if (lyricRes && lyricRes.length && songName === getFileName(currentSong.value.name)) {
-      //     lyricRes = lyricRes.filter(x => x.lyrics && x.lyrics.trim())
-      //     lyric = (lyricRes[0].lyrics || '')
-      //     const lyricTemp = uni.getStorageSync('lyricTemp') || {}
-      //     if (lyricTemp[songName]) {
-      //       const one = lyricRes.find(x => x.id === lyricTemp[songName])
-      //       if (one) lyric = one.lyrics
-      //     }
-      //     remoteLyrics.value = lyricRes
-      //   }
-      // } catch (e) { console.log(e) }
-      toast('歌词获取失败')
+      try {
+        const lyricTemp = uni.getStorageSync('lyricTemp') || {}
+        if (lyricTemp[songName]) {
+          lyric = await fetchRemoteLyric(lyricTemp[songName], songName)
+        }
+        const songsTemp = uni.getStorageSync('songsTemp') || {}
+        if (songsTemp[getFileName(currentSong.value.name)]) {
+          remoteSongs = songsTemp[songName]
+        }
+        if (!lyric) {
+          if (!remoteSongs) {
+            const songsRes = await request({ url: `https://home.199311.xyz:11111/music/songs?name=${songName}`, noToken: true })
+            console.log('songsRes', songsRes) // [ { id, name, singer, interval } ]
+            if (songsRes.data && songsRes.data.length && songName === getFileName(currentSong.value.name)) {
+              remoteSongs = songsRes.data
+            }
+          }
+          if (remoteSongs && remoteSongs.length && songName === getFileName(currentSong.value.name)) {
+            setSongsTemp(songName, remoteSongs)
+            lyric = await fetchRemoteLyric(remoteSongs[0].id, songName)
+            if (lyric) {
+              setLyricTemp(songName, remoteSongs[0].id)
+            }
+            // remoteLyrics.value = songsRes
+          }
+        }
+      } catch (e) { console.log(e); toast('歌词获取失败') }
     } else {
       const { data } = await getSongUrl(song)
       if (!data.raw_url) return
@@ -66,11 +79,14 @@ export function useLyric() {
       lyric = (lyricRes || '')
     }
     if (songName === getFileName(currentSong.value.name)) {
-      setLyricList(lyric)
+      setLyricList(lyric, remoteSongs)
     }
   }
 
-  function setLyricList(lyricStr) {
+  function setLyricList(lyricStr, remoteSongs) {
+    if (remoteSongs && remoteSongs.length) {
+      remoteLyrics.value = remoteSongs
+    }
     lyricList.value = []
     lyricText.value = lyricStr
     const lyric = lyricStr.split(/\r?\n|\r/)
@@ -93,10 +109,27 @@ export function useLyric() {
     // console.log(currentSong.value.name, lyricList.value);
   }
 
+  function fetchRemoteLyric(id, name) {
+    return new Promise((reso) => {
+      request({ url: `https://home.199311.xyz:11111/music/lyric?id=${id}&name=${name}`, noToken: true }).then(res => {
+        if (res.data && res.data.lyric) {
+          reso(res.data.lyric)
+        } else {
+          reso()
+        }
+      }).catch(() => reso())
+    })
+  }
+
   function setLyricTemp(name, id) {
     const lyricTemp = uni.getStorageSync('lyricTemp') || {}
     lyricTemp[name] = id
     uni.setStorageSync('lyricTemp', lyricTemp)
+  }
+  function setSongsTemp(name, songs) {
+    const songsTemp = uni.getStorageSync('songsTemp') || {}
+    songsTemp[name] = songs
+    uni.setStorageSync('songsTemp', songsTemp)
   }
 
   function scrollLyric() {

@@ -105,12 +105,11 @@
 
 <script setup>
 import { SYS_CONFIG } from '@/config'
-import { formatTime } from '@/utils/index'
 import { usePlayer } from '@/store/player'
 import { useProgress } from './hooks/use-progress'
 import { useLyric } from './hooks/use-lyric'
 import { uploadTextFile, downloadFile } from '@/utils/file'
-import { getFileName } from '@/utils/index'
+import { getFileName, formatTime } from '@/utils/index'
 
 const playerStore = usePlayer()
 const lyricStore = useLyric()
@@ -124,12 +123,12 @@ const lyricInd = ref(0)
 const fullScreen = ref(false)
 const visible = ref(false)
 const fontSize = ref(uni.getStorageSync('lyricFontSize') || 14)
-const syncLyric = ref(uni.getStorageSync('syncLyric') || false)
+const syncLyric = ref(uni.getStorageSync('syncLyric') || true)
 setSize(fontSize.value)
 
 // 去掉后缀名
 const currName = computed(() => (currentSong.value.name || '').split('.')[0])
-const lyrics = computed(() => remoteLyrics.value.map(item => ({ ...item, name: `${item.title}-${item.artist}-${item.album}` })))
+const lyrics = computed(() => remoteLyrics.value.map(item => ({ ...item, name: `${item.singer}-${item.name}-${formatTime(item.interval || 0)}` })))
 
 onTabItemTap(() => uni.$emit('tabClick'))
 

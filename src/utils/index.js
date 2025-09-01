@@ -11,6 +11,7 @@ export function sleep(time) {
 }
 
 export function formatTime(time) {
+  if (!time) return '00:00'
   const minute = (`${(time / 60) | 0}`).padStart(2, '0')
   const second = (`${(time % 60) | 0}`).padStart(2, '0')
   return `${minute}:${second}`
