@@ -179,9 +179,10 @@ function copyUrl() {
 
 function lyricChange(e) {
   const ind = e.detail.value
-  setLyricList(lyrics.value[ind].lyrics)
-  uni.showToast({ title: '切换歌词成功', icon: 'none' })
   setLyricTemp(currName.value, lyrics.value[ind].id)
+  fetchLyric()
+  // setLyricList(lyrics.value[ind].lyrics)
+  uni.showToast({ title: '切换歌词成功', icon: 'none' })
 }
 
 </script>

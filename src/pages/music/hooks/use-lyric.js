@@ -52,6 +52,7 @@ export function useLyric() {
         }
         const songsTemp = uni.getStorageSync('songsTemp') || {}
         if (songsTemp[getFileName(currentSong.value.name)]) {
+          console.log('songsTemp 获取成功')
           remoteSongs = songsTemp[songName]
         }
         if (!lyric) {
@@ -122,6 +123,7 @@ export function useLyric() {
   }
 
   function setLyricTemp(name, id) {
+    console.log('setLyricTemp', name, id)
     const lyricTemp = uni.getStorageSync('lyricTemp') || {}
     lyricTemp[name] = id
     uni.setStorageSync('lyricTemp', lyricTemp)
